@@ -157,6 +157,8 @@ export default class Login extends Vue {
         if (res.data.success) {
           this.$message.success(res.data.success);
           localStorage.setItem("token", res.data.token);
+          this.$store.state.userFrom = res.data.user;
+          console.log(this.$store.state.userFrom);
           this.$router.push("/");
         } else {
           this.$message.error(res.data.error);
@@ -179,7 +181,7 @@ export default class Login extends Vue {
   background-size: 100% 100%;
   position: relative;
   .box {
-    width: 60%;
+    width: 55%;
     height: 55vh;
     border-radius: 10px;
     overflow: hidden;

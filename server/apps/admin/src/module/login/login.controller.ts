@@ -39,12 +39,30 @@ export class LoginController {
         );
         return {
           success: '登陆成功',
-          token
+          token,
+          user
         }
       } else {
         return {
           error: '用户名或者密码不正确'
         }
+      }
+    }
+  }
+  // 校验旧密码
+  @Post('volidateOldPass')
+  async voidateOldPass(@Body() body: any) {
+    let oldPass: any = body.oldPass;
+    const user = await this.loginService.findId(body.editId);
+    // 解密 验证
+    let valid = bcrypt.compareSync(oldPass, user.password)
+    if (valid) {
+      return {
+        success: '与旧密码完全符合'
+      }
+    } else {
+      return {
+        error: '与旧密码不匹配'
       }
     }
   }

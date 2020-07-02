@@ -7,7 +7,7 @@
       </h4>
       <div class="user ml-auto">
         <img
-          src="../assets/img/preview.gif"
+          :src="$store.state.userFrom.imageUrl || '../assets/img/preview.gif'"
           class="rounded-circle"
           width="35"
           height="35"
@@ -16,7 +16,9 @@
         />
         <el-dropdown trigger="click">
           <el-button type="text">
-            <span class="ml-2 mr-1">admin</span>
+            <span class="ml-2 mr-1">{{
+              $store.state.userFrom.name || "浊雨不语"
+            }}</span>
             <i class="el-icon-arrow-down"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">

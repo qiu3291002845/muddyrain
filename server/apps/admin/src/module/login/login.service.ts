@@ -27,4 +27,8 @@ export class LoginService {
   async find(json) {
     return await this.userModel.findOne(json)
   }
+  // 查询 ID
+  async findId(id) {
+    return await this.userModel.findOne({ _id: id })
+  }
 }
