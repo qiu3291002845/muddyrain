@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-header height="50" style="height:5vh" class="shadow-lg pt-1 d-flex">
-      <h4 class="align-middle">
+    <el-header height="50" style="height:5vh" class="shadow-lg d-flex">
+      <h4 class="align-middle mt-1">
         <img class="mr-2" src="../assets/img/Logo.png" width="36" height="36" />
         <span>浊雨不语 - 后台管理界面</span>
       </h4>
@@ -9,28 +9,26 @@
         <img
           :src="$store.state.userFrom.imageUrl || '../assets/img/preview.gif'"
           class="rounded-circle"
-          width="35"
-          height="35"
-          alt=""
-          srcset=""
+          width="36"
+          height="36"
+          alt
+          srcset
         />
         <el-dropdown trigger="click">
           <el-button type="text">
-            <span class="ml-2 mr-1">{{
-              $store.state.userFrom.name || "浊雨不语"
-            }}</span>
+            <span class="ml-2 mr-1">
+              {{ $store.state.userFrom.name || "浊雨不语" }}
+            </span>
             <i class="el-icon-arrow-down"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
-              <el-button type="text" @click="">
-                个人资料
-              </el-button>
+              <el-button type="text" @click>个人资料</el-button>
             </el-dropdown-item>
             <el-dropdown-item style="padding:0">
-              <el-button type="text" @click="signOut" class="w-100">
-                退出登录
-              </el-button>
+              <el-button type="text" @click="signOut" class="w-100"
+                >退出登录</el-button
+              >
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -78,9 +76,9 @@ import NoteBook from "./NoteBook.vue";
 import Phone from "./Phone.vue";
 @Component({})
 export default class Main extends Vue {
-  activeName = "first";
+  private activeName = "first";
   // 侧边栏 数据
-  menu = [
+  private menu = [
     {
       title: "商品管理",
       items: [
@@ -103,8 +101,31 @@ export default class Main extends Vue {
         },
       ],
     },
+    {
+      title: "博客管理",
+      items: [
+        {
+          title: "博客分类",
+          path: "/blog/category",
+        },
+        {
+          title: "博客编辑",
+          path: "/blog/edit",
+        },
+        {
+          title: "博客列表",
+          path: "/blog",
+        },
+      ],
+    },
   ];
-  created() {}
+  created() {
+    if (!this.$store.state.userFrom.name) {
+      localStorage.clear();
+      location.reload();
+      // this.$router.push('/login')
+    }
+  }
   // 退出登录
   signOut() {
     localStorage.clear();

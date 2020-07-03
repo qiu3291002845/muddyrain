@@ -13,7 +13,7 @@ export class User {
     description: '用户名',
     example: 'admin'
   })
-  @prop()
+  @prop({ unique: true })
   username: string
   @ApiProperty({
     description: '密码',
@@ -39,6 +39,8 @@ export class User {
     description: '上传头像',
     example: 'xxxx.jpg/png/jpeg/gif'
   })
-  @prop()
+  @prop({
+    default: 'http://127.0.0.1:3000/static/logo.png'
+  })
   imageUrl: string
 }

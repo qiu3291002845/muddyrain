@@ -1,12 +1,12 @@
 import { UserDto } from './../../interface/user.interface';
-import { join, extname } from 'path';
-import { Controller, Get, Post, Body, UseInterceptors, UploadedFile, Delete, Param, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseInterceptors, UploadedFile, Delete, Param, Put, UploadedFiles } from '@nestjs/common';
 import { UserService } from './user.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { createWriteStream } from 'fs';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('用户管理')
 @Controller('/admin/api/user')
 export class UserController {
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService,) { }
   @Get('')
   find() {
     const result = this.userService.find()
@@ -19,37 +19,29 @@ export class UserController {
   }
   @Put(':id')
   async update(@Param('id') id: string, @Body() body: UserDto) {
-    await this.userService.update(id, body)
+    // console.log(body);
+    const updateBody = {
+      username: body.username,
+      name: body.name,
+      imageUrl: body.imageUrl
+    }
+    await this.userService.update(id, updateBody)
     return {
       success: '更新成功'
     }
   }
   @Post('create')
-  create(@Body() body) {
-    const result = this.userService.create(body)
-    return {
-      success: '创建成功',
-      result
-    }
-  }
-  // 图片上传
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('imageUrl'))
-  async upload(@UploadedFile() imageUrl) {
-    // console.log(imageUrl);
-    let d = Date.now()
-    let ext = extname(imageUrl.originalname).toString()
-    if (ext == ".jpg" || ext == ".png" || ext == ".gif" || ext == ".jpeg") {
-      let writeStream = createWriteStream(join(__dirname, '../../../apps/admin/src/public/upload', `${d}${extname(imageUrl.originalname)}`))
-      writeStream.write(imageUrl.buffer);
+  async create(@Body() body) {
+    const findU = await this.userService.findUsername(body.username)
+    if (findU) {
       return {
-        message: '头像上传成功',
-        url: `static/upload/${d}${extname(imageUrl.originalname)}`
+        error: '用户名不能重复'
       }
     } else {
+      const result = this.userService.create(body)
       return {
-        message: '请上传正确的图片格式(.jpg/.png/.jpeg/.gif)',
-        code: 400
+        success: '创建成功',
+        result
       }
     }
   }
@@ -59,6 +51,15 @@ export class UserController {
     this.userService.remove(id);
     return {
       success: '删除成功'
+    }
+  }
+  // 更改密码
+  @Post('/updatePass')
+  async updatePass(@Body() body) {
+    // console.log(body);
+    await this.userService.updatePass(body.id, body.pass.newPass)
+    return {
+      success: '修改成功'
     }
   }
 }

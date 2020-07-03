@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -24,6 +25,23 @@ const routes: RouteConfig[] = [
         component: () => import('../views/phone/Phone.vue'),
         props: true,
       },
+      {
+        path: '/blog',
+        name: 'Blog',
+        component: () => import('../views/blog/Blog.vue')
+      },
+      {
+        path: '/blog/edit',
+        name: "Blog-edit",
+        component: () => import('../views/blog/BlogEdit.vue'),
+        props: true
+      },
+      {
+        path: '/blog/category',
+        name: "Blog-category",
+        component: () => import('../views/blog/BlogCategory.vue'),
+        props: true
+      }
     ]
   },
   {
@@ -31,7 +49,7 @@ const routes: RouteConfig[] = [
     name: 'Login',
     component: () => import('../views/login/login.vue'),
     meta: { isPublic: true },
-  }
+  },
 ]
 
 const router = new VueRouter({

@@ -22,4 +22,10 @@ export class UserService {
   async remove(id) {
     return await this.userModel.deleteOne({ _id: id })
   }
+  async updatePass(id, pass) {
+    return await this.userModel.updateOne({ _id: id }, { password: pass })
+  }
+  async findUsername(username) {
+    return await this.userModel.findOne({ username: username })
+  }
 }

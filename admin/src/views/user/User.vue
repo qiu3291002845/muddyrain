@@ -21,16 +21,23 @@
             v-model="userForm.username"
             clearable
             :disabled="editId.length > 0"
-          >
-          </el-input>
+          ></el-input>
         </el-form-item>
         <el-form-item label="昵称" prop="name">
-          <el-input v-model="userForm.name" placeholder="请输入昵称" clearable>
-          </el-input>
+          <el-input
+            v-model="userForm.name"
+            placeholder="请输入昵称"
+            clearable
+          ></el-input>
         </el-form-item>
         <div v-if="editId.length > 0">
           <el-form-item label="密码">
-            <el-popover placement="right" width="400" trigger="click">
+            <el-popover
+              placement="right"
+              ref="popoverPass"
+              width="400"
+              trigger="click"
+            >
               <el-form
                 :model="passFrom"
                 ref="passForm"
@@ -39,18 +46,21 @@
               >
                 <el-form-item label="旧密码" prop="oldPass">
                   <el-input
+                    type="password"
+                    show-password
                     v-model="passFrom.oldPass"
                     @keyup.enter.native="
                       changePassHanlder(editId, passFrom.oldPass)
                     "
                     placeholder="请输入旧密码"
-                  >
-                  </el-input>
+                  ></el-input>
                 </el-form-item>
                 <el-form-item label="新密码" prop="newPass">
                   <el-input
+                    type="password"
+                    show-password
                     v-model="passFrom.newPass"
-                    @keyup.enter.native=""
+                    @keyup.enter.native="submitPass('passForm')"
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -59,9 +69,7 @@
                   >
                 </el-form-item>
               </el-form>
-              <el-button type="primary" slot="reference">
-                修改密码
-              </el-button>
+              <el-button type="primary" slot="reference">修改密码</el-button>
             </el-popover>
           </el-form-item>
         </div>
@@ -69,20 +77,19 @@
           <el-form-item label="密码" prop="password">
             <el-input
               type="password"
+              show-password
               placeholder="请输入密码"
               maxlength="15"
-              show-password
               show-word-limit
               v-model="userForm.password"
-            >
-            </el-input>
+            ></el-input>
           </el-form-item>
         </div>
         <el-form-item label="头像上传" prop="upload">
           <el-upload
             class="avatar-uploader"
             name="imageUrl"
-            :action="$http.defaults.baseURL + '/user/upload'"
+            :action="$http.defaults.baseURL + '/uploadOSS'"
             :show-file-list="false"
             :on-success="AvatarSuccess"
           >
@@ -114,9 +121,9 @@
       <el-table-column label="注册日期" width="180" sortable prop="date">
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
-          <span style="margin-left: 10px">{{
-            scope.row.createdAt | format
-          }}</span>
+          <span style="margin-left: 10px">
+            {{ scope.row.createdAt | format }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="头像" width="180" sortable prop="avatar">
@@ -165,17 +172,17 @@ import { Form } from "element-ui";
   },
 })
 export default class AdminCrudList extends Vue {
-  dialogVisible: boolean = false;
-  changePassword: boolean = false;
-  editId: string = "";
-  tableData = [
+  private dialogVisible: boolean = false;
+  private changePassword: boolean = false;
+  private editId: string = "";
+  private tableData = [
     {
       createdAt: "2016-05-02",
       name: "王小虎",
       username: "admin",
     },
   ];
-  passFrom = {};
+  private passFrom = {};
   // 获取数据
   async UserFetch() {
     const data = await this["$http"].get("user");
@@ -206,7 +213,7 @@ export default class AdminCrudList extends Vue {
         this.$message.error("删除失败");
       });
   }
-  loading: boolean = true;
+  private loading: boolean = true;
   async editFetch(id: string) {
     const data = await this["$http"].get(`user/${id}`);
     this.userForm = data.data;
@@ -229,8 +236,8 @@ export default class AdminCrudList extends Vue {
       })
       .catch((_) => {});
   }
-  userForm = {};
-  userRules = {
+  private userForm = {};
+  private userRules = {
     username: [
       {
         required: true,
@@ -276,9 +283,17 @@ export default class AdminCrudList extends Vue {
       if (valid) {
         if (this.editId) {
           await this["$http"].put(`/user/${this.editId}`, this.userForm);
+          this.$store.state.userFrom = this.userForm;
+          localStorage.clear();
+          location.reload();
           this.$message.success("更新成功");
         } else {
-          await this["$http"].post("/user/create", this.userForm);
+          const res = await this["$http"].post("/user/create", this.userForm);
+          if (res.data.error) {
+            this.$message.error(res.data.error);
+            this.userForm = {};
+            return;
+          }
           this.$message.success("创建成功");
         }
         (this.$refs[formName] as Form).resetFields();
@@ -293,12 +308,15 @@ export default class AdminCrudList extends Vue {
     });
   }
   AvatarSuccess(res: any) {
-    if (res.url) {
-      this.$set(this.userForm, "imageUrl", "http://127.0.0.1:3000/" + res.url);
-      this.$message.success(res.message);
-    } else {
-      this.$message.error(res.code + "-" + res.message);
+    if (res[0].uploaded == true) {
+      this.$set(
+        this.userForm,
+        "imageUrl",
+        "https://muddyrain.oss-cn-beijing.aliyuncs.com/" + res[0].path
+      );
+      this.$message.success(res[0].message);
     }
+    console.log(res[0]);
   }
   handleClose(done: any) {
     this.$confirm("确认关闭？")
@@ -313,7 +331,7 @@ export default class AdminCrudList extends Vue {
       })
       .catch((_) => {});
   }
-  validatePassRule: any;
+  private validatePassRule: any;
   async changePassHanlder(editId: string, oldPass: string) {
     const res = await this.$http.post("login/volidateOldPass", {
       editId,
@@ -344,14 +362,26 @@ export default class AdminCrudList extends Vue {
     newPass: [
       {
         required: true,
+        message: "请输入新密码",
+        trigger: "blur",
+      },
+      {
+        min: 6,
+        max: 24,
+        message: "长度在 6 到 24 个字符",
         trigger: "blur",
       },
     ],
   };
-  submitPass(formName) {
-    (this.$refs[formName] as Form).validate((valid) => {
+  submitPass(formName: any) {
+    (this.$refs[formName] as Form).validate(async (valid) => {
       if (valid) {
-        this.$message.success(this.validatePassRule.success);
+        // this.$message.success(this.validatePassRule.success);
+        const res = await this.$http.post("user/updatePass", {
+          pass: this.passFrom,
+          id: this.editId,
+        });
+        this.$message.success(res.data.success);
       } else {
         console.log("error submit!!");
         return false;

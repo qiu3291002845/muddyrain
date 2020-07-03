@@ -1,7 +1,9 @@
+import { ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Request, Response, Post, Req, Body } from '@nestjs/common';
 import { LoginService } from './login.service';
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
+@ApiTags('登录接口')
 @Controller('/admin/api/login')
 export class LoginController {
   constructor(private loginService: LoginService) { }
