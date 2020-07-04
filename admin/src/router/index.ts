@@ -32,6 +32,12 @@ const routes: RouteConfig[] = [
       },
       {
         path: '/blog/edit',
+        name: "Blog-create",
+        component: () => import('../views/blog/BlogEdit.vue'),
+        props: true
+      },
+      {
+        path: '/blog/edit/:id',
         name: "Blog-edit",
         component: () => import('../views/blog/BlogEdit.vue'),
         props: true

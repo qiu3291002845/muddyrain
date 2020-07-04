@@ -15,6 +15,7 @@ export class User {
   })
   @prop({ unique: true })
   username: string
+
   @ApiProperty({
     description: '密码',
     example: '123456'

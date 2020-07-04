@@ -8,7 +8,7 @@ export class BlogController {
   }
   @Post('/cat/create')
   async createCat(@Body() body) {
-    const res = await this.blogService.createCat(body)
+    await this.blogService.createCat(body)
     return {
       success: '创建成功'
     }
@@ -35,6 +35,41 @@ export class BlogController {
     await this.blogService.updateCat(id, body)
     return {
       success: '更新成功'
+    }
+  }
+  @Post('/create')
+  async createBlog(@Body() body) {
+    await this.blogService.createBlogs(body)
+    return { success: '新建博客成功' }
+  }
+  @Get()
+  async findBlog() {
+    const res = await this.blogService.findBlog()
+    return res
+  }
+  @Get('/:id')
+  async findOneBlog(@Param() { id }) {
+    const res = await this.blogService.findBlog(id)
+    return res
+  }
+  @Put('/:id')
+  async updateBlog(@Param() { id }, @Body() body) {
+    let json = {
+      title: body.title,
+      content: body.content,
+      imageUrl: body.imageUrl
+    }
+    await this.blogService.updateBlog(id, json)
+    return {
+      success: '更新成功'
+    }
+  }
+  @Delete('/:id')
+  async deleteBlog(@Param() { id }) {
+    // console.log(id);
+    await this.blogService.deleteBlog(id)
+    return {
+      success: '删除成功'
     }
   }
 }

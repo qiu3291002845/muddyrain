@@ -19,7 +19,7 @@ export class UserController {
   }
   @Put(':id')
   async update(@Param('id') id: string, @Body() body: UserDto) {
-    // console.log(body);
+    // console.log('提交：' + body);
     const updateBody = {
       username: body.username,
       name: body.name,

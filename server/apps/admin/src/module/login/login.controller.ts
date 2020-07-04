@@ -1,5 +1,5 @@
 import { ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Request, Response, Post, Req, Body } from '@nestjs/common';
+import { Controller, Get, Request, Response, Post, Req, Body, Param } from '@nestjs/common';
 import { LoginService } from './login.service';
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
@@ -53,7 +53,7 @@ export class LoginController {
   }
   // 校验旧密码
   @Post('volidateOldPass')
-  async voidateOldPass(@Body() body: any) {
+  async volidateOldPass(@Body() body: any) {
     let oldPass: any = body.oldPass;
     const user = await this.loginService.findId(body.editId);
     // 解密 验证
@@ -65,6 +65,22 @@ export class LoginController {
     } else {
       return {
         error: '与旧密码不匹配'
+      }
+    }
+  }
+  @Post('volidatePass/:id')
+  async volidatePass(@Param() { id }, @Body() body) {
+    let pass: any = body.password;
+    const user = await this.loginService.findId(id);
+    // 解密 验证
+    let valid = bcrypt.compareSync(pass, user.password)
+    if (valid) {
+      return {
+        success: '密码匹配成功'
+      }
+    } else {
+      return {
+        error: '密码不正确'
       }
     }
   }

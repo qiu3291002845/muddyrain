@@ -6,7 +6,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     editableTabsValue: '1',
-    userFrom: {}
+    userFrom: {
+      name: ''
+    }
   },
   mutations: {
   },
