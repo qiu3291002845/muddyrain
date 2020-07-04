@@ -20,6 +20,12 @@ const routes: RouteConfig[] = [
         component: () => import('../views/user/User.vue')
       },
       {
+        path: '/admin/notebook',
+        name: 'notebook',
+        component: () => import('../views/notebook/NoteBook.vue'),
+        props: true,
+      },
+      {
         path: '/admin/phone',
         name: 'phone',
         component: () => import('../views/phone/Phone.vue'),

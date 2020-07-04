@@ -4,3 +4,4 @@ declare module '*.vue' {
 }
 
 declare module "tinymce/tinymce"
+declare module "echarts"
