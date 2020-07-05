@@ -97,8 +97,16 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="editUser(scope.row._id)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="UserRemove(scope)">删除</el-button>
+          <el-tooltip content="编辑用户" placement="top" effect="light">
+            <el-button size="mini" @click="editUser(scope.row._id)"
+              :disabled="scope.row._id == '5efcaf2264155e668805631e'">编辑
+            </el-button>
+          </el-tooltip>
+          <el-tooltip content="删除用户" placement="top" effect="light">
+            <el-button size="mini" type="danger" @click="UserRemove(scope)"
+              :disabled="scope.row._id == '5efcaf2264155e668805631e'">
+              删除</el-button>
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
@@ -165,6 +173,10 @@
       if (this.purview == 0) {
         this.$message.info('您不是管理员请勿乱动')
       } else {
+        if (this.$store.state.userFrom._id == scope.row._id) {
+          this.$message.warning('您不能删除您自己')
+          return
+        }
         this.$confirm("是否要删除——" + scope.row.name)
           .then(async () => {
             await this["$http"].delete(`user/${scope.row._id}`);
@@ -186,13 +198,13 @@
       this.userForm = data.data;
     }
     editUser(id: string) {
-      this.editId = id;
-      this.editFetch(id);
       if (this.purview == 0) {
         this.$message.info('您不是管理员请勿乱动')
-      } else {
-        this.dialogVisible = true;
+        return
       }
+      this.editId = id;
+      this.editFetch(id);
+      this.dialogVisible = true;
     }
     // 表单取消
     cancel() {
@@ -260,7 +272,8 @@
               `/user/${this.editId}`,
               this.userForm
             );
-            this.$store.state.userFrom = this.userForm;
+            localStorage.clear();
+            location.reload();
             this.$message.success("更新成功");
           } else {
             const res = await this["$http"].post(

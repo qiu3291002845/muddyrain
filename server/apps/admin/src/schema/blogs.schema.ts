@@ -24,7 +24,8 @@ export class Blog {
   })
   @prop({
     refType: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    default: '5efcaf2264155e668805631e'
   })
   author: Ref<User>
 
@@ -34,7 +35,7 @@ export class Blog {
   })
   @prop({
     refType: mongoose.Schema.Types.ObjectId,
-    ref: 'BlogCatSchema'
+    ref: 'BlogCatSchema',
   })
   catgory: Ref<BlogCatSchema>
 

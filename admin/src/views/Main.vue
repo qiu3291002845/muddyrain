@@ -6,13 +6,16 @@
         <span>浊雨不语 - 后台管理界面</span>
       </h4>
       <div class="user ml-auto">
-        <img :src="$store.state.userFrom.imageUrl || '../assets/img/preview.gif'" class="rounded-circle" width="36"
-          height="36" alt srcset />
+        <img
+          :src="$store.state.userFrom.imageUrl || 'https://muddyrain.oss-cn-beijing.aliyuncs.com/images/20200705/18350872.gif'"
+          class="rounded-circle" width="36" height="36" alt srcset />
         <el-dropdown trigger="click">
-          <el-button type="text">
-            <span class="ml-2 mr-1">{{ $store.state.userFrom.name || "浊雨不语" }}</span>
-            <i class="el-icon-arrow-down"></i>
-          </el-button>
+          <el-tooltip :content=" $store.state.userFrom.username" placement="bottom" effect="light">
+            <el-button type="text">
+              <span class="ml-2 mr-1">{{ $store.state.userFrom.name || "浊雨不语" }}</span>
+              <i class="el-icon-arrow-down"></i>
+            </el-button>
+          </el-tooltip>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
               <el-button type="text" @click>个人资料</el-button>

@@ -47,6 +47,21 @@ export class BlogController {
   @Get()
   async findBlog() {
     const res = await this.blogService.findBlog()
+    res.forEach(element => {
+      if (element.author == null) {
+        element.author = {
+          imageUrl: 'http://127.0.0.1:3000/static/upload/1593618209232.gif',
+          purview: 1,
+          _id: '5efcaf2264155e668805631e',
+          username: 'muddyrain',
+          name: '浊雨不语',
+          password: '$2a$10$2XVxqbf1iKfGCJ5igrzEJujK5tMTNDYBELdx.8zF0XLwIg9fPR9n2',
+          createdAt: '2020-07-01T15:43:30.377Z',
+          updatedAt: '2020-07-05T10:06:15.370Z',
+          __v: 0
+        }
+      }
+    });
     return res
   }
   @Get('/:id')
