@@ -179,6 +179,11 @@
       }
     }
     created() {
+      // if (this.$store.state.userFrom.purview == 0) {
+      //   this.$message.info("您不是管理员请勿乱动")
+      //   this.$router.push('/blog')
+      //   return
+      // }
       this.blogForm.author = this.$store.state.userFrom._id;
       this.blogAuthor = this.$store.state.userFrom.name;
       if (this.id) {

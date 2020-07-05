@@ -1,3 +1,5 @@
+import { BlogcatDto } from './../../interface/blogcat.interface';
+import { BlogDto } from './../../interface/blog.interface';
 import { ApiTags } from '@nestjs/swagger';
 import { BlogService } from './blog.service';
 import { Controller, Post, Body, Get, Delete, Param, Put, Query } from '@nestjs/common';
@@ -7,7 +9,7 @@ export class BlogController {
   constructor(private blogService: BlogService) {
   }
   @Post('/cat/create')
-  async createCat(@Body() body) {
+  async createCat(@Body() body: BlogcatDto) {
     await this.blogService.createCat(body)
     return {
       success: '创建成功'
@@ -38,7 +40,7 @@ export class BlogController {
     }
   }
   @Post('/create')
-  async createBlog(@Body() body) {
+  async createBlog(@Body() body: BlogDto) {
     await this.blogService.createBlogs(body)
     return { success: '新建博客成功' }
   }

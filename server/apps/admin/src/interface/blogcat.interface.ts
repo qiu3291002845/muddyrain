@@ -1,3 +1,3 @@
-export interface Blogcat {
-  name: string
+export interface BlogcatDto {
+  name: string;
 }

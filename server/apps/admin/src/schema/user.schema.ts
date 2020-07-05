@@ -44,4 +44,13 @@ export class User {
     default: 'http://127.0.0.1:3000/static/logo.png'
   })
   imageUrl: string
+
+  @ApiProperty({
+    description: '用户权限',
+    example: '系统管理员',
+  })
+  @prop({
+    default: 0
+  })
+  purview: number
 }

@@ -32,6 +32,18 @@ const routes: RouteConfig[] = [
         props: true,
       },
       {
+        path: '/notebookbrand',
+        name: 'notebookbrand',
+        component: () => import('../views/notebook/NoteBookBrand.vue'),
+        props: true
+      },
+      {
+        path: '/phonebrand',
+        name: 'phonebrand',
+        component: () => import('../views/phone/PhoneBrand.vue'),
+        props: true
+      },
+      {
         path: '/blog',
         name: 'Blog',
         component: () => import('../views/blog/Blog.vue')

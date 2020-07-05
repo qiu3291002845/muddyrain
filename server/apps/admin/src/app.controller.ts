@@ -1,3 +1,4 @@
+import { ApiTags } from '@nestjs/swagger';
 import { join, extname } from 'path';
 import { Controller, Get, Post, UseInterceptors, UploadedFile, Put, UploadedFiles } from '@nestjs/common';
 import { AppService } from './app.service';
@@ -5,6 +6,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { createWriteStream } from 'fs';
 import { OSSService } from '@nest-public/nest-oss';
 import { FilesInterceptor } from '@nestjs/platform-express';
+
+@ApiTags('公共接口')
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService, private readonly OSSService: OSSService) { }

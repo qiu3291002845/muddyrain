@@ -1,7 +1,7 @@
 <template>
   <div>
     <h5>博客列表</h5>
-    <el-button type="primary" class="mt-2" @click="$router.push('/blog/edit')">新建博客</el-button>
+    <el-button type="primary" class="mt-2" @click="createBlog">新建博客</el-button>
     <el-table :data="blogList" style="width: 100%" stripe>
       <el-table-column prop="createdAt" label="创建日期" width="160">
       </el-table-column>
@@ -23,12 +23,12 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="edit(scope.row._id)">编辑</el-button>
+          <el-button size="mini" @click="edit(scope.row.author._id,scope.row._id)">编辑</el-button>
           <el-button size="mini" type="danger" @click="remove(scope.row.author._id,scope.row._id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="验证用户" :visible.sync="dialogFormVisible">
+    <el-dialog title="验证用户(删除博客)" :visible.sync="dialogFormVisible">
       <el-form :model="userform" :rules="userRule" ref="ruleForm" label-width="80px">
         <el-form-item label="密码" prop="password">
           <el-input type="password" show-password v-model="userform.password"
@@ -38,6 +38,18 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false;userform={}">取 消</el-button>
         <el-button type="primary" @click="deleteBlog('ruleForm')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="验证用户(编辑博客)" :visible.sync="dialogFormEditVisible">
+      <el-form :model="userform" :rules="userRule" ref="ruleForm" label-width="80px">
+        <el-form-item label="密码" prop="password">
+          <el-input type="password" show-password v-model="userform.password" @keyup.enter.native="EditBlog('ruleForm')"
+            autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormEditVisible = false;userform={}">取 消</el-button>
+        <el-button type="primary" @click="EditBlog('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -65,9 +77,11 @@
       }
     }]
     private dialogFormVisible = false;
+    private dialogFormEditVisible = false
     private userform = {}
     private volidateId: string | undefined
     private blogDeleteId: string | undefined
+    private purview: number = 0
     userRule = {
       password: [{
         required: true,
@@ -87,8 +101,35 @@
         item.updatedAt = item.updatedAt.substring(0, 10)
       }
     }
-    async edit(id: string) {
-      this.$router.push(`/blog/edit/${id}`)
+    async createBlog() {
+      // if (this.purview == 0) {
+      //   this.$message.info("您不是管理员请勿乱动")
+      //   return
+      // }
+      this.$router.push('/blog/edit')
+    }
+    async edit(userId: string, blogId: string) {
+      this.dialogFormEditVisible = true;
+      this.volidateId = userId
+      this.blogDeleteId = blogId
+    }
+    EditBlog(formName: any) {
+      (this.$refs[formName] as Form).validate(async (valid) => {
+        if (valid) {
+          const res = await this.$http.post(`/login/volidatePass/${this.volidateId}`, this.userform)
+          if (res.data.success) {
+            this.$message.success('验证成功')
+            this.dialogFormEditVisible = false;
+            this.userform = {}
+            this.$router.push(`/blog/edit/${this.blogDeleteId}`)
+          } else {
+            this.$message.error('您输入的密码不正确')
+            this.userform = {}
+          }
+        } else {
+          return false;
+        }
+      });
     }
     async remove(userId: string, blogId: string) {
       this.dialogFormVisible = true;
@@ -98,7 +139,6 @@
     deleteBlog(formName: any) {
       (this.$refs[formName] as Form).validate(async (valid) => {
         if (valid) {
-          console.log(this.volidateId);
           const res = await this.$http.post(`/login/volidatePass/${this.volidateId}`, this.userform)
           if (res.data.success) {
             this.$message.success('验证成功')
@@ -123,9 +163,9 @@
       });
     }
     created() {
+      this.purview = this.$store.state.userFrom.purview
       this.fetchBlogList()
     }
-
   };
 </script>
 

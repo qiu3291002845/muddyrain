@@ -16,8 +16,8 @@
           </div>
           <el-form :model="userForm" ref="userRuleFrom" :rules="userRules" label-width="100px">
             <el-form-item label="用户名" prop="username">
-              <el-input placeholder="请输入用户" maxlength="15" show-word-limit v-model="userForm.username" clearable
-                style="width:85%" @keyup.enter.native="submitUser('userRuleFrom')"></el-input>
+              <el-input autofocus="true" placeholder="请输入用户" maxlength="15" show-word-limit v-model="userForm.username"
+                clearable style="width:85%" @keyup.enter.native="submitUser('userRuleFrom')"></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
               <el-input type="password" placeholder="请输入密码" maxlength="15" show-password show-word-limit

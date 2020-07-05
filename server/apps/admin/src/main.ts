@@ -20,7 +20,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api-docs', app, document);
+  SwaggerModule.setup('/admin/api-docs', app, document);
   //配置 session 的中间件 
 
   console.log('已连接数据库');

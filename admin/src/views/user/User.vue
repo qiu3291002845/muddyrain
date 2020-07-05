@@ -1,12 +1,21 @@
 <template>
   <div>
-    <el-button type="primary" @click="dialogVisible = true">新建用户</el-button>
+    <h5 class="mb-2">用户管理</h5>
+    <el-button class="mt-2" type="primary" @click="createUser">新建用户</el-button>
     <el-dialog width="60%" :title="editId.length > 0 ? '编辑用户' : '创建用户'" :visible.sync="dialogVisible"
-      :before-close="handleClose">
+      :before-close="handleClose" :fullscreen="isFullscreen">
       <el-form :model="userForm" ref="userRuleFrom" :rules="userRules" label-width="80px">
         <el-form-item label="用户名" prop="username">
-          <el-input placeholder="请输入用户名" maxlength="15" show-word-limit v-model="userForm.username" clearable
-            :disabled="editId.length > 0"></el-input>
+          <div class="d-flex">
+            <el-input placeholder="请输入用户名" maxlength="15" show-word-limit v-model="userForm.username" clearable
+              :disabled="editId.length > 0"></el-input>
+            <el-tooltip content="点击全屏" placement="top" effect="light">
+              <!-- content to trigger tooltip here -->
+              <el-button type @click="isFullscreen=!isFullscreen" class="ml-2">
+                <i class="el-icon-full-screen"></i>
+              </el-button>
+            </el-tooltip>
+          </div>
         </el-form-item>
         <el-form-item label="昵称" prop="name">
           <el-input v-model="userForm.name" placeholder="请输入昵称" clearable></el-input>
@@ -38,6 +47,12 @@
               v-model="userForm.password"></el-input>
           </el-form-item>
         </div>
+        <el-form-item label="授权">
+          <el-radio-group v-model="userForm.purview">
+            <el-radio-button label="0" value="0">普通用户</el-radio-button>
+            <el-radio-button label="1" value="1">系统管理员</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="头像上传" prop="upload">
           <el-upload class="avatar-uploader" name="imageUrl" :action="$http.defaults.baseURL + '/uploadOSS'"
             :show-file-list="false" :on-success="AvatarSuccess">
@@ -48,7 +63,7 @@
       </el-form>
       <span slot="footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitUser('userRuleFrom')">确 定</el-button>
+        <el-button class="mr-2" type="primary" @click="submitUser('userRuleFrom')">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -57,9 +72,7 @@
       <el-table-column label="注册日期" width="180" sortable prop="date">
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
-          <span style="margin-left: 10px">
-            {{ scope.row.createdAt | format }}
-          </span>
+          <span style="margin-left: 10px">{{ scope.row.createdAt | format }}</span>
         </template>
       </el-table-column>
       <el-table-column label="头像" width="180" sortable prop="avatar">
@@ -78,6 +91,9 @@
             </div>
           </el-popover>
         </template>
+      </el-table-column>
+      <el-table-column label="身份" width="140">
+        <template slot-scope="scope">{{scope.row.purview | purview }}</template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -101,17 +117,26 @@
     components: {},
     filters: {
       format: (value: string) => value.slice(0, 10),
-    },
+      purview: (value: number) => {
+        if (value == 0) {
+          return "普通用户";
+        } else {
+          return "系统管理员";
+        }
+      }
+    }
   })
   export default class AdminCrudList extends Vue {
     private dialogVisible: boolean = false;
+    private isFullscreen: boolean = false;
     private changePassword: boolean = false;
     private editId: string = "";
+    private purview: number = 0
     private tableData = [{
       createdAt: "2016-05-02",
       name: "王小虎",
-      username: "admin",
-    }, ];
+      username: "admin"
+    }];
     private passFrom = {};
     // 获取数据
     async UserFetch() {
@@ -119,29 +144,41 @@
       this.tableData = data.data;
       this.loading = false;
     }
+    async createUser() {
+      if (this.purview == 0) {
+        this.$message.info('您不是管理员请勿乱动')
+      } else {
+        this.dialogVisible = true;
+      }
+    }
     created() {
+      this.purview = this.$store.state.userFrom.purview
       this.UserFetch();
       this.$notify({
         title: "欢迎来到浊雨不语后台管理界面",
         message: "浊雨不知心中事,纷纷落语眼前花。",
         duration: 1000,
-        type: "success",
+        type: "success"
       });
     }
     async UserRemove(scope: any) {
-      this.$confirm("是否要删除——" + scope.row.name)
-        .then(async () => {
-          await this["$http"].delete(`user/${scope.row._id}`);
-          this.$message({
-            type: "success",
-            message: "删除成功",
+      if (this.purview == 0) {
+        this.$message.info('您不是管理员请勿乱动')
+      } else {
+        this.$confirm("是否要删除——" + scope.row.name)
+          .then(async () => {
+            await this["$http"].delete(`user/${scope.row._id}`);
+            this.$message({
+              type: "success",
+              message: "删除成功"
+            });
+            // 删除成功后获取数据
+            this.UserFetch();
+          })
+          .catch(() => {
+            this.$message.warning("取消删除");
           });
-          // 删除成功后获取数据
-          this.UserFetch();
-        })
-        .catch(() => {
-          this.$message.error("删除失败");
-        });
+      }
     }
     private loading: boolean = true;
     async editFetch(id: string) {
@@ -150,73 +187,86 @@
     }
     editUser(id: string) {
       this.editId = id;
-      this.dialogVisible = true;
       this.editFetch(id);
+      if (this.purview == 0) {
+        this.$message.info('您不是管理员请勿乱动')
+      } else {
+        this.dialogVisible = true;
+      }
     }
     // 表单取消
     cancel() {
       this.$confirm("确认关闭？")
-        .then((_) => {
+        .then(_ => {
           this.editId = "";
           this.userForm = {};
           this.passFrom = {};
           this.dialogVisible = false;
+          this.isFullscreen = false;
           // location.reload();
           (this.$refs["userRuleFrom"] as Form).resetFields();
         })
-        .catch((_) => {});
+        .catch(_ => {});
     }
     private userForm = {};
     private userRules = {
       username: [{
-        required: true,
-        message: '请输入用户名',
-        trigger: 'blur'
-      }, {
-        min: 2,
-        max: 20,
-        message: '长度在 2 到 20 个字符'
-      }, {
-        pattern: /^[a-zA-Z]\w{1,19}$/,
-        message: '以字母开头，长度在2-20之间,只能包含字符、数字和下划线',
-        trigger: 'blur'
-      }],
+          required: true,
+          message: "请输入用户名",
+          trigger: "blur"
+        },
+        {
+          min: 4,
+          max: 20,
+          message: "长度在 4 到 20 个字符",
+          trigger: "blur"
+        },
+        {
+          pattern: /^[a-zA-Z]\w{3,19}$/,
+          message: "以字母开头，长度在4-20之间,只能包含字符、数字和下划线",
+          trigger: "blur"
+        }
+      ],
       name: [{
           required: true,
           message: "请输入昵称",
-          trigger: "blur",
+          trigger: "blur"
         },
         {
           min: 2,
           max: 7,
           message: "长度在 2 到 7 个字符",
-          trigger: "blur",
-        },
+          trigger: "blur"
+        }
       ],
       password: [{
           required: true,
           message: "请输入密码",
-          trigger: "blur",
+          trigger: "blur"
         },
         {
           min: 6,
           max: 24,
           message: "长度在 6 到 24 个字符",
-          trigger: "blur",
-        },
-      ],
+          trigger: "blur"
+        }
+      ]
     };
     submitUser(formName: any) {
-      (this.$refs[formName] as Form).validate(async (valid) => {
+      (this.$refs[formName] as Form).validate(async valid => {
         if (valid) {
           if (this.editId) {
-            await this["$http"].put(`/user/${this.editId}`, this.userForm);
+            await this["$http"].put(
+              `/user/${this.editId}`,
+              this.userForm
+            );
             this.$store.state.userFrom = this.userForm;
-            localStorage.clear();
-            location.reload();
             this.$message.success("更新成功");
           } else {
-            const res = await this["$http"].post("/user/create", this.userForm);
+            const res = await this["$http"].post(
+              "/user/create",
+              this.userForm
+            );
             if (res.data.error) {
               this.$message.error(res.data.error);
               this.userForm = {};
@@ -247,30 +297,31 @@
     }
     handleClose(done: any) {
       this.$confirm("确认关闭？")
-        .then((_) => {
+        .then(_ => {
           this.editId = "";
           this.userForm = {};
           this.passFrom = {};
           this.dialogVisible = false;
+          this.isFullscreen = false;
           // location.reload();
           (this.$refs["userRuleFrom"] as Form).resetFields();
           done();
         })
-        .catch((_) => {});
+        .catch(_ => {});
     }
     private validatePassRule: any;
     async changePassHanlder(editId: string, oldPass: string) {
       const res = await this.$http.post("login/volidateOldPass", {
         editId,
-        oldPass,
+        oldPass
       });
       this.validatePassRule = res.data;
     }
     validateUsername(rule: any, value: string, callback: any) {
       let Reg = /^[a-zA-Z][-_a-zA-Z0-9]{1,5}/;
-      let reg = /^(\w[A-Z]{1}\w*\s?)*$/g
+      let reg = /^(\w[A-Z]{1}\w*\s?)*$/g;
       if (reg.test(value)) {
-        console.log('验证成功');
+        console.log("验证成功");
       }
     }
     async validateOldPass(rule: any, value: any, callback: any) {
@@ -289,28 +340,28 @@
       oldPass: [{
         required: true,
         validator: this.validateOldPass,
-        trigger: "blur",
-      }, ],
+        trigger: "blur"
+      }],
       newPass: [{
           required: true,
           message: "请输入新密码",
-          trigger: "blur",
+          trigger: "blur"
         },
         {
           min: 6,
           max: 24,
           message: "长度在 6 到 24 个字符",
-          trigger: "blur",
-        },
-      ],
+          trigger: "blur"
+        }
+      ]
     };
     submitPass(formName: any) {
-      (this.$refs[formName] as Form).validate(async (valid) => {
+      (this.$refs[formName] as Form).validate(async valid => {
         if (valid) {
           // this.$message.success(this.validatePassRule.success);
           const res = await this.$http.post("user/updatePass", {
             pass: this.passFrom,
-            id: this.editId,
+            id: this.editId
           });
           this.$message.success(res.data.success);
           localStorage.clear();

@@ -23,7 +23,8 @@ export class UserController {
     const updateBody = {
       username: body.username,
       name: body.name,
-      imageUrl: body.imageUrl
+      imageUrl: body.imageUrl,
+      purview: body.purview
     }
     await this.userService.update(id, updateBody)
     return {
