@@ -26,7 +26,7 @@ export class NoteBook {
   @prop({
     required: true
   })
-  color: string
+  color: []
 
   @ApiProperty({
     description: '商品副标题'
@@ -74,7 +74,7 @@ export class NoteBook {
   @prop({
     required: true
   })
-  size: string
+  size: []
 
   @ApiProperty({
     description: '内存'
@@ -85,12 +85,20 @@ export class NoteBook {
   ram: string
 
   @ApiProperty({
-    description: '硬盘容量'
+    description: '硬盘种类'
   })
   @prop({
     required: true
   })
   hardDisk: string
+
+  @ApiProperty({
+    description: '硬盘容量'
+  })
+  @prop({
+    required: true
+  })
+  hardDiskCapacity: string
 
   @ApiProperty({
     description: '操作系统'
@@ -99,4 +107,12 @@ export class NoteBook {
     required: true
   })
   os: string
+
+  @ApiProperty({
+    description: '缩略图'
+  })
+  @prop({
+    required: true
+  })
+  imageUrl: []
 }

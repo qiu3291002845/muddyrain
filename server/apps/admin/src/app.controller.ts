@@ -1,6 +1,6 @@
 import { ApiTags } from '@nestjs/swagger';
 import { join, extname } from 'path';
-import { Controller, Get, Post, UseInterceptors, UploadedFile, Put, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, UseInterceptors, UploadedFile, Put, UploadedFiles, Req, Param, Query, Body } from '@nestjs/common';
 import { AppService } from './app.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { createWriteStream } from 'fs';
@@ -36,6 +36,12 @@ export class AppController {
       }
     }
   }
+  @Post('/admin/api/uploadManyOSS')
+  @UseInterceptors(FilesInterceptor('imageUrl'))
+  public async uploadManyOSS(@UploadedFiles() imageUrl) {
+    const result = await this.OSSService.upload(imageUrl);
+    return result;
+  }
   @Post('/admin/api/uploadOSS')
   @UseInterceptors(FilesInterceptor('imageUrl'))
   public async uploadOSS(@UploadedFiles() imageUrl) {
@@ -67,5 +73,22 @@ export class AppController {
     // 		message: '上传成功'
     // 	}
     // ]
+  }
+  // 删除
+  @Post('/admin/api/deleteOSS')
+  public async deleteOSS(@Req() req, @Body() { img }) {
+    // const uploadUrl = ['images/20191115/16420962.png'];
+    const result = await this.OSSService.deleteMulti([img]);
+    return result;
+    // return '删除成功'
+    // result {
+    // 	res: {
+    // 		status: 200,
+    // 		statusCode: 200,
+    // 		statusMessage: 'OK',
+    // 		// ....
+    // 	},
+    //  deleted: [ 'images/20191115/16420962.png' ]
+    // }
   }
 }

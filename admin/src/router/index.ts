@@ -65,6 +65,21 @@ const routes: RouteConfig[] = [
         name: "Blog-category",
         component: () => import('../views/blog/BlogCategory.vue'),
         props: true
+      },
+      {
+        path: '/computerCpu',
+        name: 'Computer-cpu',
+        component: () => import('../views/handware/ComputerCpu.vue')
+      },
+      {
+        path: '/displayCard',
+        name: 'Display-card',
+        component: () => import('../views/handware/DisplayCard.vue')
+      },
+      {
+        path: '/phoneCpu',
+        name: 'Phone-cpu',
+        component: () => import('../views/handware/PhoneCpu.vue')
       }
     ]
   },

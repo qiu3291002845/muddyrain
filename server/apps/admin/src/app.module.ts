@@ -9,14 +9,17 @@ import { BlogModule } from './module/blog/blog.module';
 import { OSSModule } from '@nest-public/nest-oss';
 import { config } from './config/config.js';
 import { NotebookModule } from './module/notebook/notebook.module';
+import { ComputercpuModule } from './module/computercpu/computercpu.module';
+import { ToolService } from './service/tool/tool.service';
+import { DisplaycardModule } from './module/displaycard/displaycard.module';
 @Module({
   imports: [TypegooseModule.forRoot('mongodb://127.0.0.1:27017/muddyrain', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
-  }), UserModule, LoginModule, BlogModule, OSSModule.forRoot(config), NotebookModule],
+  }), UserModule, LoginModule, BlogModule, OSSModule.forRoot(config), NotebookModule, ComputercpuModule, DisplaycardModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ToolService],
 })
 
 export class AppModule {

@@ -11,7 +11,7 @@
           <el-input v-model="blogAuthor" disabled></el-input>
         </el-form-item>
         <el-form-item label="所属分类" prop="catgory">
-          <el-select v-model="blogForm.catgory" placeholder="请选择" @visible-change="fetchCat()">
+          <el-select clearable v-model="blogForm.catgory" placeholder="请选择" @visible-change="fetchCat()">
             <el-option v-for="item in options" :key="item._id" :label="item.name" :value="item._id"></el-option>
           </el-select>
         </el-form-item>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-header height="50" style="height:5vh" class="shadow-lg d-flex pt-1">
-      <h4 class="align-middle">
+      <h4 class="align-middle pt-1">
         <img class="mr-2" src="../assets/img/Logo.png" width="36" height="36" />
         <span>浊雨不语 - 后台管理界面</span>
       </h4>
@@ -111,9 +111,30 @@
             path: '/phonebrand'
           },
         ]
+      },
+      {
+        title: '硬件管理',
+        items: [{
+            title: '电脑处理器',
+            path: '/computerCpu'
+          },
+          {
+            title: '电脑显卡',
+            path: '/displayCard'
+          }, {
+            title: '手机处理器',
+            path: '/phoneCpu'
+          },
+        ]
       }
     ];
     created() {
+      if (this.$store.state.userFrom.purview == 1) {
+        this.$notify.success({
+          title: '消息',
+          message: '欢迎回来~管理员'
+        });
+      }
       if (!this.$store.state.userFrom.name) {
         localStorage.clear();
         location.reload();
