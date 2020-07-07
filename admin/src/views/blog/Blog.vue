@@ -132,6 +132,10 @@
       });
     }
     async remove(userId: string, blogId: string) {
+      // if (this.purview == 0) {
+      //   this.$message.info("您不是管理员请勿乱动");
+      //   return;
+      // }
       this.dialogFormVisible = true;
       this.volidateId = userId
       this.blogDeleteId = blogId

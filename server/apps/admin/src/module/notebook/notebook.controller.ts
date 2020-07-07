@@ -1,3 +1,4 @@
+import { NotebookDto } from './../../interface/notebook.interface';
 import { NotebookbrandDto } from './../../interface/notebookbrand.interface';
 import { NotebookService } from './notebook.service';
 import { Controller, Post, Get, Delete, Put, Param, Body, Query } from '@nestjs/common';
@@ -39,6 +40,46 @@ export class NotebookController {
     await this.notebookService.updateBrand(id, body)
     return {
       success: '更新成功'
+    }
+  }
+  @Post()
+  async create(@Body() body: NotebookDto) {
+    const res = await this.notebookService.create(body);
+    return {
+      success: '新建成功'
+    };
+  }
+  @Get()
+  async find(@Query() { count, keyword }) {
+    if (count) {
+      const res = await this.notebookService.find(null, 10, (count - 1) * 10)
+      return res
+    } else if (keyword) {
+      const res = await this.notebookService.findLike(keyword);
+      return res
+    } else {
+      const res = await this.notebookService.find();
+      return res
+    }
+    return '1'
+  }
+  @Get('/:id')
+  async findId(@Param() { id }) {
+    const res = await this.notebookService.find(id);
+    return res
+  }
+  @Put('/:id')
+  async update(@Param() { id }, @Body() body) {
+    const res = await this.notebookService.update(id, body);
+    return {
+      success: '更新成功'
+    }
+  }
+  @Delete('/:id')
+  async delete(@Param() { id }) {
+    await this.notebookService.delete(id)
+    return {
+      success: '删除成功'
     }
   }
 }

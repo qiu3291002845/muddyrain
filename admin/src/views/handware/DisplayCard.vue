@@ -17,7 +17,7 @@
           </span>
           <span v-else>
             <el-input placeholder="请输入显卡的型号 (例如: RTX 2080 Ti )" v-model="createFrom.name"
-              @keyup.enter.native="submitCreate" autocomplete="off"></el-input>
+              @keyup.enter.native="submitCreate('ruleForm')" autocomplete="off"></el-input>
           </span>
         </el-form-item>
         <el-form-item label="版本" prop="version">
@@ -27,7 +27,7 @@
           </span>
           <span v-else>
             <el-input placeholder="请输入显卡的版本 (例如: GeForce 20 )" v-model="createFrom.version"
-              @keyup.enter.native="submitCreate" autocomplete="off"></el-input>
+              @keyup.enter.native="submitCreate('ruleForm')" autocomplete="off"></el-input>
           </span>
         </el-form-item>
       </el-form>
@@ -147,6 +147,7 @@
             this.fetchTable()
             this.currentPage = 1
           }
+          (this.$refs["ruleForm"] as Form).resetFields();
         } else {
           return false;
         }
@@ -158,7 +159,8 @@
       this.createFrom = {}
       this.editId = "";
       this.fetchTable()
-      this.$message.success(res.data.success)
+      this.$message.success(res.data.success);
+      (this.$refs["ruleForm"] as Form).resetFields();
     }
     async fetchTable(id ? : string) {
       if (id) {

@@ -1,7 +1,13 @@
+import { computerCpu } from './computerCpu';
+import { displayCard } from './displayCard.schema';
 import { NoteBookBrand } from './noteBookBrand.schema';
 import { ApiProperty } from '@nestjs/swagger';
-import { prop, mongoose, Ref } from "@typegoose/typegoose";
-
+import { prop, mongoose, Ref, ModelOptions } from "@typegoose/typegoose";
+@ModelOptions({
+  schemaOptions: {
+    timestamps: true
+  }
+})
 export class NoteBook {
   @ApiProperty({
     description: '商品名称',
@@ -26,7 +32,7 @@ export class NoteBook {
   @prop({
     required: true
   })
-  color: []
+  color: string
 
   @ApiProperty({
     description: '商品副标题'
@@ -56,17 +62,21 @@ export class NoteBook {
     description: '处理器型号'
   })
   @prop({
-    required: true
+    required: true,
+    refType: mongoose.Schema.Types.ObjectId,
+    ref: computerCpu
   })
-  cpu: string
+  cpu: Ref<computerCpu>
 
   @ApiProperty({
     description: '显卡'
   })
   @prop({
-    required: true
+    required: true,
+    refType: mongoose.Schema.Types.ObjectId,
+    ref: displayCard
   })
-  displayCard: string
+  displayCard: Ref<displayCard>
 
   @ApiProperty({
     description: '屏幕尺寸'
@@ -74,7 +84,7 @@ export class NoteBook {
   @prop({
     required: true
   })
-  size: []
+  size: string
 
   @ApiProperty({
     description: '内存'

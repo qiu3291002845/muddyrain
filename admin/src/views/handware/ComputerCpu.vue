@@ -17,7 +17,7 @@
           </span>
           <span v-else>
             <el-input placeholder="请输入CPU的型号 (例如: i9-9980XE)" v-model="createFrom.name"
-              @keyup.enter.native="submitCreate" autocomplete="off"></el-input>
+              @keyup.enter.native="submitCreate('ruleForm')" autocomplete="off"></el-input>
           </span>
         </el-form-item>
         <el-form-item label="版本" prop="version">
@@ -26,8 +26,8 @@
               @keyup.enter.native="submitEdit(editId)" autocomplete="off"></el-input>
           </span>
           <span v-else>
-            <el-input placeholder="请输入CPU的版本 (例如: 九代酷睿)" v-model="createFrom.version" @keyup.enter.native="submitCreate"
-              autocomplete="off"></el-input>
+            <el-input placeholder="请输入CPU的版本 (例如: 九代酷睿)" v-model="createFrom.version"
+              @keyup.enter.native="submitCreate('ruleForm')" autocomplete="off"></el-input>
           </span>
         </el-form-item>
       </el-form>
@@ -146,6 +146,7 @@
             this.fetchTable()
             this.currentPage = 1
           }
+          (this.$refs["ruleForm"] as Form).resetFields();
         } else {
           return false;
         }
@@ -157,7 +158,8 @@
       this.createFrom = {}
       this.editId = "";
       this.fetchTable()
-      this.$message.success(res.data.success)
+      this.$message.success(res.data.success);
+      (this.$refs["ruleForm"] as Form).resetFields();
     }
     async fetchTable(id ? : string) {
       if (id) {
