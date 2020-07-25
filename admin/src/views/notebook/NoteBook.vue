@@ -3,6 +3,8 @@
     <h5 class="mb-2">笔记本管理</h5>
     <el-dialog :title="!editId?'创建商品':'编辑商品'" :visible.sync="dialogVisible" width="40%" :before-close="handleClose"
       :fullscreen="isFullscreen">
+      <el-alert class="mb-4" title="若本地图片库未清理请您先清理再创建商品" type="error" v-if="!editId">
+      </el-alert>
       <el-form :model="productForm" ref="productRule" :rules="productRules" label-width="80px">
         <el-form-item label="商品名称" prop="name">
           <div class="d-flex">
@@ -106,20 +108,26 @@
               :on-preview="handlePictureCardPreview" :on-success="handleUploadSuccess" :on-remove="handleRemove">
               <i class="el-icon-plus"></i>
             </el-upload>
-            <el-dialog :visible.sync="uploadDialogVisible">
+            <el-dialog :visible.sync="uploadDialogVisible" id="uploadImage">
               <img width="100%" :src="productForm.imageUrl" alt />
             </el-dialog>
+            <!-- <el-upload
+              class="upload-demo"
+              drag
+              :action="$http.defaults.baseURL  + '/uploadManyOSS'"
+              name="imageUrl"
+              multiple>
+              <i class="el-icon-upload"></i>
+              <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+              <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload> -->
           </el-form-item>
         </span>
         <span v-else>
-          <el-form-item label="商品图片" prop="imageUrl">
-            <el-upload :action="$http.defaults.baseURL  + '/uploadManyOSS'" name="imageUrl" list-type="picture-card"
-              :on-preview="handlePictureCardPreview" :on-success="handleUploadSuccess" :on-remove="handleRemove">
-              <i class="el-icon-plus"></i>
-            </el-upload>
-            <el-dialog :visible.sync="uploadDialogVisible">
-              <img width="100%" :src="productForm.imageUrl" alt />
-            </el-dialog>
+          <el-form-item label="商品图片">
+            <el-image style="width:150px;height:150px; padding:3px;border:1px dashed #ccc;" :src="srcList[0]"
+              :preview-src-list="srcList">
+            </el-image>
           </el-form-item>
           <!-- <el-form-item label="商品图片">
             <div class="d-flex flex-row justify-content-start flex-wrap">
@@ -258,11 +266,14 @@
     }
   })
   export default class NoteBook extends Vue {
+    private srcList: any = [
+      'https://muddyrain.oss-cn-beijing.aliyuncs.com/7.jpg',
+      'https://muddyrain.oss-cn-beijing.aliyuncs.com/200622_2cb6jdfi3aj3b8gcedd978ie40ej3_3888x5832.jpg_468x468.jpg'
+    ];
+    private imgList: any = [];
     private dialogVisible: boolean = false;
     private productForm: any = {
-      imageUrl: [
-        []
-      ],
+      imageUrl: [],
       cpu: {
         name: ''
       },
@@ -540,12 +551,16 @@
       this.editId = id;
       this.dialogVisible = true;
       const res = await this.$http.get(`notebook/${id}`);
+      res.data[0].imageUrl.map((e: any): any => {
+        this.imgList.push(e[0]);
+      })
+      this.srcList = this.imgList;
       this.productForm = res.data[0];
       this.$delete(this.productForm, '_id');
-      this.$set(this.productForm, 'imageUrl', [])
       this.displayCardName = res.data[0].displayCard.name;
       this.cpuName = res.data[0].cpu.name;
       this.brandName = res.data[0].brand.name;
+      // this.srcList = this.productForm['imageUrl'];
     }
     async addUploadImg() {
       let a = ['']
@@ -607,6 +622,15 @@
         color: #ddd;
       }
     }
+  }
+
+  #uploadImage {
+    z-index: 9999 !important;
+
+  }
+
+  #uploadImage .el-dialog {
+    z-index: 9999 !important;
   }
 
   .productImg:hover div {

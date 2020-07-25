@@ -16,5 +16,5 @@ export interface NotebookDto {
   hardDisk: string;
   hardDiskCapacity: string;
   os: string;
-  imageUrl: [];
+  imageUrl: [''];
 }

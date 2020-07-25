@@ -80,7 +80,24 @@ const routes: RouteConfig[] = [
         path: '/phoneCpu',
         name: 'Phone-cpu',
         component: () => import('../views/handware/PhoneCpu.vue')
-      }
+      }, {
+        path: '/clothing/girlCategory',
+        name: 'GirlCategory',
+        component: () => import('../views/clothing/GirlCategory.vue'),
+        props: true
+      },
+      {
+        path: '/clothing/girl',
+        name: 'Girl',
+        component: () => import('../views/clothing/Girl.vue'),
+        props: true
+      },
+      {
+        path: '/clothing/girlEdit',
+        name: 'GirlEdit',
+        component: () => import('../views/clothing/GirlEdit.vue'),
+        props: true
+      },
     ]
   },
   {

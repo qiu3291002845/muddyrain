@@ -124,5 +124,5 @@ export class NoteBook {
   @prop({
     required: true
   })
-  imageUrl: []
+  imageUrl: ['']
 }

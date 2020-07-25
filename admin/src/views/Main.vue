@@ -62,84 +62,101 @@
         title: "首页管理",
         items: [{
           title: "首页",
-          path: "/"
-        }]
+          path: "/",
+        }, ],
+      },
+      {
+        title: "服装管理",
+        items: [{
+            title: "女装分类",
+            path: "/clothing/girlCategory",
+          },
+          {
+            title: '女装编辑',
+            path: "/clothing/girlEdit",
+          },
+          {
+            title: "女装管理",
+            path: "/clothing/girl",
+          },
+        ],
       },
       {
         title: "商品管理",
         items: [{
             title: "笔记本管理",
-            path: "/admin/notebook"
+            path: "/admin/notebook",
           },
           {
             title: "手机管理",
-            path: "/admin/phone"
-          }
-        ]
+            path: "/admin/phone",
+          },
+        ],
       },
       {
         title: "运营管理",
         items: [{
           title: "用户管理",
-          path: "/user"
-        }]
+          path: "/user",
+        }, ],
       },
       {
         title: "博客管理",
         items: [{
             title: "博客分类",
-            path: "/blog/category"
+            path: "/blog/category",
           },
           {
             title: "新建博客",
-            path: "/blog/edit"
+            path: "/blog/edit",
           },
           {
             title: "博客列表",
-            path: "/blog"
-          }
-        ]
+            path: "/blog",
+          },
+        ],
       },
       {
-        title: '品牌管理',
+        title: "品牌管理",
         items: [{
             title: "笔记本品牌",
-            path: '/notebookbrand'
+            path: "/notebookbrand",
           },
           {
             title: "手机品牌",
-            path: '/phonebrand'
+            path: "/phonebrand",
           },
-        ]
+        ],
       },
       {
-        title: '硬件管理',
+        title: "硬件管理",
         items: [{
-            title: '电脑处理器',
-            path: '/computerCpu'
+            title: "电脑处理器",
+            path: "/computerCpu",
           },
           {
-            title: '电脑显卡',
-            path: '/displayCard'
-          }, {
-            title: '手机处理器',
-            path: '/phoneCpu'
+            title: "电脑显卡",
+            path: "/displayCard",
           },
-        ]
-      }
+          {
+            title: "手机处理器",
+            path: "/phoneCpu",
+          },
+        ],
+      },
     ];
     created() {
       if (this.$store.state.userFrom.purview == 1) {
         this.$notify.success({
-          title: '消息',
-          message: '欢迎回来~管理员'
+          title: "消息",
+          message: "欢迎回来~管理员",
         });
       }
-      if (!this.$store.state.userFrom.name) {
-        localStorage.clear();
-        location.reload();
-        // this.$router.push('/login')
-      }
+      // if (!this.$store.state.userFrom.name) {
+      //   localStorage.clear();
+      //   location.reload();
+      //   // this.$router.push('/login')
+      // }
     }
     // 退出登录
     signOut() {

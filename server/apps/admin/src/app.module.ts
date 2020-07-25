@@ -12,12 +12,13 @@ import { NotebookModule } from './module/notebook/notebook.module';
 import { ComputercpuModule } from './module/computercpu/computercpu.module';
 import { ToolService } from './service/tool/tool.service';
 import { DisplaycardModule } from './module/displaycard/displaycard.module';
+import { GirlModule } from './module/girl/girl.module';
 @Module({
   imports: [TypegooseModule.forRoot('mongodb://127.0.0.1:27017/muddyrain', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
-  }), UserModule, LoginModule, BlogModule, OSSModule.forRoot(config), NotebookModule, ComputercpuModule, DisplaycardModule],
+  }), UserModule, LoginModule, BlogModule, OSSModule.forRoot(config), NotebookModule, ComputercpuModule, DisplaycardModule, GirlModule],
   controllers: [AppController],
   providers: [AppService, ToolService],
 })
