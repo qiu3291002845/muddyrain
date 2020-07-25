@@ -587,7 +587,7 @@
       this.fetchBrand();
     }
     created() {
-      this.purview = this.$store.state.userFrom.purview;
+      this.purview = (localStorage.getItem("purview") as any);
       this.fetchList();
     }
   }

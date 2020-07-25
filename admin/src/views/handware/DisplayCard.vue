@@ -226,11 +226,14 @@
       this.tableData = res.data;
     }
     async fetchSearch() {
+      if (this.search == "") {
+        this.fetchTable();
+      }
       const res = await this.$http.get(`/displaycard?keyword=${this.search}`)
       this.tableData = res.data;
     }
     created() {
-      this.purview = this.$store.state.userFrom.purview
+      this.purview = (localStorage.getItem("purview") as any);
       this.fetchTable()
     }
 

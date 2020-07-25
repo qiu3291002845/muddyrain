@@ -74,6 +74,8 @@
       'https://muddyrain.oss-cn-beijing.aliyuncs.com/200622_2cb6jdfi3aj3b8gcedd978ie40ej3_3888x5832.jpg_468x468.jpg'
     ];
     private categoryname: string = '';
+    // 管理权限
+    private purview: number = 1;
     private createForm: Object = {
       goodsDetail: []
     }
@@ -94,7 +96,7 @@
       category: [{
         required: true,
         message: '请选择商品分类',
-        trigger: 'blur'
+        trigger: 'change'
       }, ],
       presentPrice: [{
         required: true,
@@ -108,7 +110,7 @@
       }, ],
       amount: [{
         required: true,
-        message: '请输入商品原价',
+        message: '请输入商品库存',
         trigger: 'blur'
       }, ],
       goodsDetail: [{
@@ -174,6 +176,12 @@
       this.$router.push('/clothing/girl');
     }
     created() {
+      this.purview = (localStorage.getItem("purview") as any);
+      if (this.purview == 0) {
+        this.$message.info("您不是管理员请勿乱动")
+         this.$router.push('/clothing/girl');
+        return
+      }
       this.changeCategory();
       if (this.id) {
         this.findId();

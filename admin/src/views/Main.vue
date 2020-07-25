@@ -6,13 +6,12 @@
         <span>浊雨不语 - 后台管理界面</span>
       </h4>
       <div class="user ml-auto">
-        <img
-          :src="$store.state.userFrom.imageUrl || 'https://muddyrain.oss-cn-beijing.aliyuncs.com/images/20200705/18350872.gif'"
+        <img :src="imgUrl || 'https://muddyrain.oss-cn-beijing.aliyuncs.com/images/20200705/18350872.gif'"
           class="rounded-circle" width="36" height="36" alt srcset />
         <el-dropdown trigger="click">
-          <el-tooltip :content=" $store.state.userFrom.username" placement="bottom" effect="light">
+          <el-tooltip :content=" username" placement="bottom" effect="light">
             <el-button type="text">
-              <span class="ml-2 mr-1">{{ $store.state.userFrom.name || "浊雨不语" }}</span>
+              <span class="ml-2 mr-1">{{ name || "浊雨不语" }}</span>
               <i class="el-icon-arrow-down"></i>
             </el-button>
           </el-tooltip>
@@ -28,9 +27,9 @@
       </div>
     </el-header>
     <el-container>
-      <el-aside width="200px">
+      <el-aside width="200px" style="overflow: hidden;">
         <el-menu mode="vertical" :default-active="$route.path" class="el-menu-vertical-demo" background-color="#545c64"
-          text-color="#fff" active-text-color="#ffd04b" style="height:95vh" router>
+          text-color="#fff" active-text-color="#ffd04b" style="height:95vh;" router>
           <el-submenu v-for="(item, index) in menu" :index="`meum-item-${index}`" :key="`meum-item-${index}`">
             <template slot="title">{{ item.title }}</template>
             <el-menu-item v-for="(subItem, subIndex) in item.items" :index="subItem.path"
@@ -145,13 +144,19 @@
         ],
       },
     ];
+    private imgUrl: string = '';
+    private username: string = '';
+    private name: string = '';
     created() {
-      if (this.$store.state.userFrom.purview == 1) {
+      if ((localStorage.getItem("purview") as any) == 1) {
         this.$notify.success({
           title: "消息",
           message: "欢迎回来~管理员",
         });
       }
+      this.imgUrl = (localStorage.getItem("imageUrl") as string);
+      this.username = (localStorage.getItem("username") as string);
+      this.name = (localStorage.getItem("name") as string);
       // if (!this.$store.state.userFrom.name) {
       //   localStorage.clear();
       //   location.reload();
@@ -165,4 +170,5 @@
     }
   }
 </script>
-<style scoped></style>
+<style scoped>
+</style>

@@ -160,7 +160,7 @@
       }
     }
     created() {
-      this.purview = this.$store.state.userFrom.purview
+      this.purview = (localStorage.getItem("purview") as any);
       this.UserFetch();
       this.$notify({
         title: "欢迎来到浊雨不语后台管理界面",

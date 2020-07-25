@@ -5,7 +5,8 @@
     <el-dialog :title="!editId?'创建分类':'修改分类'" :visible.sync="dialogFormVisible" :before-close="handleClose">
       <el-form :model="createForm" label-width="80px" :rules="rulesForm" ref="ruleForm">
         <el-form-item label="一级分类" prop="firstCategoryName">
-          <el-input  placeholder="请输入一级分类" autofocus v-model="createForm.firstCategoryName" autocomplete="off"></el-input>
+          <el-input placeholder="请输入一级分类" autofocus v-model="createForm.firstCategoryName" autocomplete="off">
+          </el-input>
         </el-form-item>
         <el-form-item label="二级分类" prop="secondCategoryName">
           <el-input placeholder="请输入二级分类" v-model="createForm.secondCategoryName" autocomplete="off"></el-input>
@@ -97,9 +98,15 @@
       }],
     }
     private loading: Boolean = false;
+    // 管理权限
+    private purview: number = 1;
     // 新建表格对话框
     private dialogFormVisible: Boolean = false;
     createCategroy(): void {
+      if (this.purview == 0) {
+        this.$message.info("您不是管理员请勿乱动")
+        return
+      }
       this.dialogFormVisible = true;
     }
     beforeAvatarUpload(): void {
@@ -157,12 +164,20 @@
       this.tableData = res.data;
     }
     async EditFrom(id: string) {
+      if (this.purview == 0) {
+        this.$message.info("您不是管理员请勿乱动")
+        return
+      }
       this.editId = id;
       const res = await this.$http.get(`/girl/category/${id}`);
       this.createForm = res.data;
       this.dialogFormVisible = true;
     }
     async deleteCategory(id: string) {
+      if (this.purview == 0) {
+        this.$message.info("您不是管理员请勿乱动")
+        return
+      }
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -182,6 +197,7 @@
       });
     }
     created() {
+      this.purview = (localStorage.getItem("purview") as any);
       this.findTableData();
     }
   }

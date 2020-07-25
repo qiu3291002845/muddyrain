@@ -50,27 +50,55 @@ export class GirlController {
     };
   }
   @Get()
-  async find() {
-    const res =await this.girlService.find();
-    return res;
+  async find(@Query() { count, sort }) {
+    if (count && sort) {
+      const res = await this.girlService.find({ count: (count - 1) * 6, pagesize: 6, sort: sort as boolean});
+      return {
+        data: res,
+        total: res.length
+      }
+    } else {
+      const res = await this.girlService.find({});
+      return {
+        data: res,
+        total: res.length
+      }
+    }
+  }
+  @Get('/search')
+  async findLike(@Query() { count, pagesize, keyword }) {
+    let c = (count - 1) * pagesize
+    if (count) {
+      const res = await this.girlService.findLike(c * 1, pagesize, keyword);
+      return {
+        data: res,
+        total: res.length
+      }
+    } else if (!count) {
+      const res = await this.girlService.findLike(null, null, keyword);
+      return {
+        data: res,
+        total: res.length
+      }
+    }
   }
   @Get('/:id')
   async findOne(@Param() { id }) {
-    const res =await this.girlService.findOne(id);
+    const res = await this.girlService.findOne(id);
     return res;
   }
   @Put('/:id')
-  async updateOne(@Param() { id },@Body() json) {
-    const res =await this.girlService.updateOne(id,json);
+  async updateOne(@Param() { id }, @Body() json) {
+    const res = await this.girlService.updateOne(id, json);
     return {
-      success:'修改成功'
+      success: '修改成功'
     };
   }
   @Delete('/:id')
   async deleteOne(@Param() { id }) {
     await this.girlService.deleteOne(id);
     return {
-      success:'修改成功'
+      success: '删除成功'
     };
   }
 }

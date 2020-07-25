@@ -111,7 +111,11 @@
           if (res.data.success) {
             this.$message.success(res.data.success);
             localStorage.setItem("token", res.data.token);
-            this.$store.state.userFrom = res.data.user;
+            console.log(res.data.user);
+            localStorage.setItem("name", res.data.user.name);
+            localStorage.setItem("purview", res.data.user.purview);
+            localStorage.setItem("username", res.data.user.username);
+            localStorage.setItem("imageUrl", res.data.user.imageUrl); 
             this.$router.push("/");
           } else {
             this.$message.error(res.data.error);

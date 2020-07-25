@@ -121,7 +121,6 @@
       } else {
         const re = await this.$http.get(`/notebook/brand`)
         this.tablelength = re.data;
-        console.log(this.tablelength);
         const res = await this.$http.get(`/notebook/brand?count=1`)
         this.tableData = res.data;
       }
@@ -171,7 +170,7 @@
       this.tableData = res.data;
     }
     created() {
-      this.purview = this.$store.state.userFrom.purview
+      this.purview = (localStorage.getItem("purview") as any);
       this.fetchTable()
     }
 

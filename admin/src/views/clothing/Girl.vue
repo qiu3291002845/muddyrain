@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h5>女装管理</h5>
+    <h5>女装管理<el-button class="ml-4" @click="toggleSort">切换排序</el-button>
+    </h5>
     <el-table :data="tableData" stripe>
       <el-table-column prop="_id" label="序列号" width="240" fit="true">
       </el-table-column>
@@ -9,9 +10,9 @@
           <img :src="scope.row.category.image" alt="" width="50" height="50">
         </template>
       </el-table-column>
-      <el-table-column prop="category.firstCategoryName" label="商品类别" width="120">
+      <el-table-column prop="category.firstCategoryName" label="商品类别" width="120" sortable>
       </el-table-column>
-      <el-table-column label="商品名称" width="220">
+      <el-table-column label="商品名称" width="220" sortable prop="goodsName">
         <template slot-scope="scope">
           <el-tooltip :content="scope.row.goodsName" placement="top" effect="light">
             <span>{{scope.row.goodsName | ellipsis}}</span>
@@ -28,12 +29,12 @@
         </template>
 
       </el-table-column>
-      <el-table-column label="商品价格" width="180">
+      <el-table-column label="商品价格" width="180" sortable prop="presentPrice">
         <template slot-scope="scope">
           <span style="font-size:20px;color:orange;">￥{{scope.row.presentPrice}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品原价" width="180">
+      <el-table-column label="商品原价" width="180" sortable prop="oriPrice">
         <template slot-scope="scope">
           <span class="oriPrice">￥{{scope.row.oriPrice}}</span>
         </template>
@@ -47,16 +48,18 @@
       <el-table-column label="搜索">
         <template slot="header" slot-scope="scope">
           <el-tooltip content="请输入您要搜索的商品" placement="top" effect="light">
-            <el-input v-model="searchKeyword" placeholder="输入关键字搜索" clearable>
+            <el-input v-model="searchKeyword" placeholder="输入关键字搜索" clearable @input="searchGirl(1)">
               <i slot="prefix" class="el-input__icon el-icon-search"></i>
             </el-input>
           </el-tooltip>
         </template>
       </el-table-column>
-
-
     </el-table>
-
+    <div class="block mt-4">
+      <el-pagination @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-size="6"
+        layout="prev, pager, next, jumper" :total="totalSize">
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -99,11 +102,22 @@
     }];
     // 搜索关键字
     private searchKeyword = "";
-    async findTableData() {
-      const res = await this.$http.get('girl');
-      this.tableData = res.data;
-
-      res.data.map((e: any, index: number) => {
+    // 跳转到的页数
+    private currentPage: number = 1;
+    // 管理权限
+    private purview: number = 0;
+    // 总页数
+    private totalSize: number = 30;
+    // 每页的页数
+    private pageSize: number = 6;
+    private sort: boolean = true;
+    async findTableData(sort ? : boolean) {
+      this.searchKeyword = "";
+      const count = await this.$http.get(`girl`)
+      this.totalSize = count.data.total;
+      const res = await this.$http.get(`girl?count=1&sort=${this.sort}`);
+      this.tableData = res.data.data;
+      res.data.data.map((e: any, index: number) => {
         let imgList: any = [];
         e.goodsDetail.map((img: any) => {
           imgList.push(img[0]);
@@ -112,6 +126,10 @@
       })
     }
     editForm(id: string) {
+      if (this.purview == 0) {
+        this.$message.info("您不是管理员请勿乱动")
+        return
+      }
       this.$router.push({
         name: 'GirlEdit',
         params: {
@@ -120,6 +138,10 @@
       })
     }
     async deleteGirl(id: string) {
+      if (this.purview == 0) {
+        this.$message.info("您不是管理员请勿乱动")
+        return
+      }
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -138,8 +160,55 @@
         });
       });
     }
-    created() {
+    async handleCurrentChange(val: number) {
+      if (this.searchKeyword != "") {
+        const res = await this.$http.get(
+          `girl/search?count=${val}&pagesize=${this.pageSize}&keyword=${this.searchKeyword}`);
+        this.tableData = res.data.data;
+        res.data.data.map((e: any, index: number) => {
+          let imgList: any = [];
+          e.goodsDetail.map((img: any) => {
+            imgList.push(img[0]);
+          });
+          (this.tableData[index].goodsDetail as any) = imgList;
+        });
+      } else {
+        const res = await this.$http.get(`girl?count=${val}&pagesize=${this.pageSize}&sort=${this.sort}`);
+        this.tableData = res.data.data;
+        res.data.data.map((e: any, index: number) => {
+          let imgList: any = [];
+          e.goodsDetail.map((img: any) => {
+            imgList.push(img[0]);
+          });
+          (this.tableData[index].goodsDetail as any) = imgList;
+        });
+      }
+    }
+    // 搜索
+    async searchGirl(count: number) {
+      const total = await this.$http.get(`girl/search?keyword=${this.searchKeyword}`);
+      this.totalSize = total.data.total;
+      const res = await this.$http.get(
+        `girl/search?count=${count}&pagesize=${this.pageSize}&keyword=${this.searchKeyword}`);
+      this.tableData = res.data.data;
+      res.data.data.map((e: any, index: number) => {
+        let imgList: any = [];
+        e.goodsDetail.map((img: any) => {
+          imgList.push(img[0]);
+        });
+        (this.tableData[index].goodsDetail as any) = imgList;
+      });
+      if (this.searchKeyword == "") {
+        this.findTableData();
+      }
+    }
+    toggleSort() {
+      this.sort = !this.sort;
+      this.findTableData(this.sort);
+    }
+    mounted() {
       this.findTableData();
+      this.purview = (localStorage.getItem("purview") as any);
     }
   }
 </script>

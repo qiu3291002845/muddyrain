@@ -15,7 +15,7 @@ export class LoginService {
   // 生成验证码
   async captcha() {
     var captcha = svgCaptcha.create({
-      size: 6,
+      size: 4,
       fontSize: 50,
       width: 100,
       height: 36,
