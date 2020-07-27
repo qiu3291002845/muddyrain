@@ -10,9 +10,9 @@ async function bootstrap() {
   // 允许跨域
   app.enableCors()
   // 配置静态资源目录
-  app.useStaticAssets(join(__dirname, '../../../apps/admin/src/', 'public'), {
-    prefix: '/static/'
-  })
+   app.useStaticAssets(join(__dirname, '../../../apps/admin/src/', 'public'), {
+    // prefix: '/static/'
+   })
   // 配置接口文档
   const options = new DocumentBuilder()
     .setTitle('浊雨不语商城项目后台管理接口文档')

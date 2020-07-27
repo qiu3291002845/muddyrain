@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"muddyrain.computercpus"}],"uuid":"515d8d040d864ae5a5f7a846132c8427"}

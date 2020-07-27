@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"muddyrain.girlcategories"}],"uuid":"f90b6c6f221c4fa7b6bd74e1d3d9ffcd"}
