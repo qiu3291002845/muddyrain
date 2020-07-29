@@ -98,6 +98,18 @@ const routes: RouteConfig[] = [
         component: () => import('../views/clothing/GirlEdit.vue'),
         props: true
       },
+      {
+        path: '/home/slideEdit',
+        name: 'EditSlide',
+        component: () => import('../views/home/editSlide.vue'),
+        props: true,
+      },
+      {
+        path: '/home/slide',
+        name: 'Slide',
+        component: () => import('../views/home/Slide.vue'),
+        props: true,
+      }
     ]
   },
   {

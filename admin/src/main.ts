@@ -13,8 +13,8 @@ import './assets/fonts/iconfont.css'
 
 
 Vue.prototype.$http = axios.create({
-  baseURL: process.env.VUE_APP_API_URL || '/admin/api',
-  // baseURL: "http://www.aimmeng.com:3000/admin/api"
+  // baseURL: process.env.VUE_APP_API_URL || '/admin/api',
+  baseURL: "http://127.0.0.1:3000/admin/api"
 })
 new Vue({
   router,

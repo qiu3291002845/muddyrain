@@ -40,7 +40,9 @@
       <el-container>
         <el-main height>
           <!-- Main content -->
-          <router-view :key="$route.path"></router-view>
+          <keep-alive include="HelloWorld">
+            <router-view :key="$route.path"></router-view>
+          </keep-alive>
         </el-main>
       </el-container>
     </el-container>
@@ -62,6 +64,12 @@
         items: [{
           title: "首页",
           path: "/",
+        }, {
+          title: "编辑轮播图",
+          path: "/home/slideEdit",
+        }, {
+          title: "轮播图管理",
+          path: "/home/slide",
         }, ],
       },
       {
