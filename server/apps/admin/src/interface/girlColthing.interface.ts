@@ -1,3 +1,4 @@
+import { Girl } from './../schema/girl.schema copy';
 import { GirlCategory } from './../schema/girlCategory.schema';
 import { Ref } from '@typegoose/typegoose';
 export interface GirlColthingDto {
@@ -6,5 +7,5 @@ export interface GirlColthingDto {
   goodsDetail: [];
   presentPrice: string;
   oriPrice: string;
-  category:Ref<GirlCategory>
+  category:Ref<Girl>
 }

@@ -1,22 +1,12 @@
 <template>
   <div>
-    <h5>女装分类</h5>
+    <h5 class="mb-2">一级分类</h5>
     <el-button class="mt-2" type="primary" @click="createCategroy">新建分类</el-button>
     <el-dialog :title="!editId?'创建分类':'修改分类'" :visible.sync="dialogFormVisible" :before-close="handleClose">
       <el-form :model="createForm" label-width="80px" :rules="rulesForm" ref="ruleForm">
-        <el-form-item label="一级分类" prop="firstCategoryName">
-          <el-input placeholder="请输入一级分类" autofocus v-model="createForm.firstCategoryName" autocomplete="off">
-          </el-input>
-        </el-form-item>
         <el-form-item label="二级分类" prop="secondCategoryName">
-          <el-input placeholder="请输入二级分类" v-model="createForm.secondCategoryName" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="分类图标" prop="image">
-          <el-upload class="avatar-uploader" :action="$http.defaults.baseURL + '/uploadOSS'" :show-file-list="false"
-            name="imageUrl" :on-success="handleAvatarSuccess">
-            <img v-if="createForm.image" :src="createForm.image" class="avatar">
-            <i v-else style="border: 1px dashed #d9d9d9" class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
+          <el-input placeholder="请输入二级分类" autofocus v-model="createForm.secondCategoryName" autocomplete="off">
+          </el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -28,13 +18,6 @@
 
     <el-table :data="tableData" stripe v-loading="loading">
       <el-table-column prop="_id" label="ID" width="220">
-      </el-table-column>
-      <el-table-column label="分类图标" width="160">
-        <template slot-scope="scope">
-          <img :src="scope.row.image" alt="" width="50" height="50">
-        </template>
-      </el-table-column>
-      <el-table-column prop="firstCategoryName" label="一级分类" width="220">
       </el-table-column>
       <el-table-column prop="secondCategoryName" label="二级分类" width="220">
       </el-table-column>
@@ -64,12 +47,11 @@
   @Component({
     components: {}
   })
-  export default class GirlCategory extends Vue {
+  export default class GirlSecond extends Vue {
     private tableData: Array < Object > = [{
       _id: '1564860864351864',
       image: 'https://muddyrain.oss-cn-beijing.aliyuncs.com/4.png',
       firstCategoryName: '连衣裙',
-      secondCategoryName: '半身裙'
     }];
     private editId: String = "";
     private currentPage: number = 1
@@ -81,11 +63,6 @@
       image: '',
     };
     private rulesForm: Object = {
-      firstCategoryName: [{
-        required: true,
-        message: '请输入一级分类',
-        trigger: 'blur'
-      }],
       secondCategoryName: [{
         required: true,
         message: '请输入二级分类',
@@ -115,7 +92,7 @@
     async submitForm(formName: any) {
       (this.$refs[formName] as Form).validate(async (valid) => {
         if (valid) {
-          const res = await this.$http.post('/girl/category', this.createForm);
+          const res = await this.$http.post('/girl/second', this.createForm);
           this.$message.success(res.data.success);
           this.dialogFormVisible = false;
           this.createForm = {};
@@ -129,7 +106,7 @@
     async editSubmitForm(formName: any, id: String) {
       (this.$refs[formName] as Form).validate(async (valid) => {
         if (valid) {
-          const res = await this.$http.put(`/girl/category/${this.editId}`, this.createForm);
+          const res = await this.$http.put(`/girl/second/${this.editId}`, this.createForm);
           this.$message.success(res.data.success);
           this.dialogFormVisible = false;
           this.createForm = {};
@@ -156,11 +133,11 @@
       }
     }
     async findTableData() {
-      const res = await this.$http.get('/girl/category?count=1');
+      const res = await this.$http.get('/girl/second?count=1');
       this.tableData = res.data.data;
     }
     async handleCurrentChange(val: number) {
-      const res = await this.$http.get(`/girl/category?count=${val}`);
+      const res = await this.$http.get(`/girl/second?count=${val}`);
       this.tableData = res.data.data;
     }
     async EditFrom(id: string) {
@@ -169,7 +146,7 @@
         return
       }
       this.editId = id;
-      const res = await this.$http.get(`/girl/category/${id}`);
+      const res = await this.$http.get(`/girl/second/${id}`);
       this.createForm = res.data;
       this.dialogFormVisible = true;
     }
@@ -183,7 +160,7 @@
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async () => {
-        const res = await this.$http.delete(`/girl/category/${id}`);
+        const res = await this.$http.delete(`/girl/second/${id}`);
         this.$message({
           type: 'success',
           message: '删除成功!'

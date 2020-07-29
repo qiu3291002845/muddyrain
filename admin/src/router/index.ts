@@ -87,6 +87,18 @@ const routes: RouteConfig[] = [
         props: true
       },
       {
+        path: '/clothing/firstCategory',
+        name: 'GirlFirst',
+        component: () => import('../views/clothing/GirlFirst.vue'),
+        props: true
+      },
+      {
+        path: '/clothing/secondCategory',
+        name: 'GirlSecond',
+        component: () => import('../views/clothing/GirlSecond.vue'),
+        props: true
+      },
+      {
         path: '/clothing/girl',
         name: 'Girl',
         component: () => import('../views/clothing/Girl.vue'),
@@ -109,7 +121,7 @@ const routes: RouteConfig[] = [
         name: 'Slide',
         component: () => import('../views/home/Slide.vue'),
         props: true,
-      }
+      },
     ]
   },
   {

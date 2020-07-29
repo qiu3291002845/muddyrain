@@ -22,7 +22,7 @@
     async fetchSlide() {
       const res = await this.$http.get('slide');
       let img = ['1', '2', '3', '4', '5', '6'];
-      res.data.map((e: any, index: number) => {
+      res.data.data.map((e: any, index: number) => {
         img[index] = e.imgUrl[0][0];
       });
       (this.slideData as any) = img;

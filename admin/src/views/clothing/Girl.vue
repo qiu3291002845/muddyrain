@@ -7,10 +7,10 @@
       </el-table-column>
       <el-table-column label="分类图标" width="120">
         <template slot-scope="scope">
-          <img :src="scope.row.category.image" alt="" width="50" height="50">
+          <img :src="scope.row.firstCategoryName.image" alt="" width="50" height="50">
         </template>
       </el-table-column>
-      <el-table-column prop="category.firstCategoryName" label="商品类别" width="120" sortable>
+      <el-table-column prop="secondCategoryName.secondCategoryName" label="商品类别" width="120" sortable>
       </el-table-column>
       <el-table-column label="商品名称" width="220" sortable prop="goodsName">
         <template slot-scope="scope">
@@ -93,10 +93,13 @@
         'https://muddyrain.oss-cn-beijing.aliyuncs.com/7.jpg',
         'https://muddyrain.oss-cn-beijing.aliyuncs.com/200622_2cb6jdfi3aj3b8gcedd978ie40ej3_3888x5832.jpg_468x468.jpg'
       ],
-      "category": {
+      "firstCategoryName": {
         _id: '1564860864351864',
-        image: 'https://muddyrain.oss-cn-beijing.aliyuncs.com/4.png',
-        firstCategoryName: '连衣裙',
+        image:'https://muddyrain.oss-cn-beijing.aliyuncs.com/images/20200729/21205776.png',
+        secondCategoryName: '连衣裙'
+      },
+      "secondCategoryName": {
+        _id: '1564860864351864',
         secondCategoryName: '长款连衣裙'
       }
     }];

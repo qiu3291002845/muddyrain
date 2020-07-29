@@ -75,8 +75,12 @@
       {
         title: "服装管理",
         items: [{
-            title: "女装分类",
-            path: "/clothing/girlCategory",
+            title: "一级分类",
+            path: "/clothing/firstCategory",
+          },
+          {
+            title: "二级分类",
+            path: "/clothing/secondCategory",
           },
           {
             title: '女装编辑',

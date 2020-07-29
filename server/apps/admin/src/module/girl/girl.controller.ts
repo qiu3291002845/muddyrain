@@ -12,14 +12,60 @@ export class GirlController {
       success: '创建成功'
     };
   }
+  @Post('/first')
+  createFirst(@Body() body): Object {
+    this.girlService.createFirst(body);
+    return {
+      success: '创建成功'
+    };
+  }
+  @Post('/second')
+  createSecond(@Body() body): Object {
+    this.girlService.createSecond(body);
+    return {
+      success: '创建成功'
+    };
+  }
   @Get('/category')
   async findCategory(@Query() { count }) {
     if (count) {
       const res = await this.girlService.findCategory({ count: (count - 1) * 8, pageSize: 8, id: null });
-      return res;
+      return {
+        data: res,
+      }
     } else {
       const res = await this.girlService.findCategory({ count: null, pageSize: null, id: null });
-      return res;
+      return {
+        data: res,
+      }
+    }
+  }
+  @Get('/first')
+  async findFirst(@Query() { count }) {
+    if (count) {
+      const res = await this.girlService.findFirst({ count: (count - 1) * 8, pageSize: 8, id: null });
+      return {
+        data: res,
+      }
+    } else {
+      const res = await this.girlService.findFirst({ count: null, pageSize: null, id: null });
+      return {
+        data: res,
+      }
+    }
+  }
+  @Get('/second')
+  async findSecond(@Query() { count }) {
+    if (count) {
+      const res = await this.girlService.findSecond({ count: (count - 1) * 8, pageSize: 8, id: null });
+      return {
+        data: res,
+      }
+    } else {
+      const res = await this.girlService.findSecond({ count: null, pageSize: null, id: null });
+      return {
+        data: res,
+      }
     }
   }
   @Get('/category/:id')
@@ -27,9 +73,33 @@ export class GirlController {
     const res = await this.girlService.findCategory({ count: null, pageSize: null, id: id });
     return res;
   }
+  @Get('/first/:id')
+  async findFirstId(@Param() { id }) {
+    const res = await this.girlService.findFirst({ count: null, pageSize: null, id: id });
+    return res;
+  }
+  @Get('/second/:id')
+  async findSecondId(@Param() { id }) {
+    const res = await this.girlService.findSecond({ count: null, pageSize: null, id: id });
+    return res;
+  }
   @Put('/category/:id')
   async editCategory(@Param() { id }, @Body() json) {
     await this.girlService.editCategory(id, json);
+    return {
+      success: '修改成功'
+    };
+  }
+  @Put('/first/:id')
+  async editFirst(@Param() { id }, @Body() json) {
+    await this.girlService.editFirst(id, json);
+    return {
+      success: '修改成功'
+    };
+  }
+  @Put('/second/:id')
+  async editSecond(@Param() { id }, @Body() json) {
+    await this.girlService.editSecond(id, json);
     return {
       success: '修改成功'
     };
@@ -41,7 +111,20 @@ export class GirlController {
       success: '删除成功'
     };
   }
-
+  @Delete('/first/:id')
+  async deleteFirst(@Param() { id }) {
+    await this.girlService.deleteSecond(id);
+    return {
+      success: '删除成功'
+    };
+  }
+  @Delete('/second/:id')
+  async deleteSecond(@Param() { id }) {
+    await this.girlService.deleteSecond(id);
+    return {
+      success: '删除成功'
+    };
+  }
   @Post()
   async create(@Body() json: GirlColthingDto) {
     await this.girlService.create(json);
@@ -52,7 +135,7 @@ export class GirlController {
   @Get()
   async find(@Query() { count, sort }) {
     if (count && sort) {
-      const res = await this.girlService.find({ count: (count - 1) * 6, pagesize: 6, sort: sort as boolean});
+      const res = await this.girlService.find({ count: (count - 1) * 6, pagesize: 6, sort: sort as boolean });
       return {
         data: res,
         total: res.length

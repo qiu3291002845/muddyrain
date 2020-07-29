@@ -55,8 +55,8 @@
     }]
     async fetchData() {
       const res = await this.$http.get('slide');
-      this.tableData = res.data;
-      res.data.map((e: any, index: number) => {
+      this.tableData = res.data.data;
+      res.data.data.map((e: any, index: number) => {
         (this.tableData[index] as any).imgUrl = e.imgUrl[0];
       })
     }

@@ -5,13 +5,21 @@
       <el-form-item label="商品名称" prop="goodsName">
         <el-input v-model="createForm.goodsName" placeholder="请输入商品名称" autofocus></el-input>
       </el-form-item>
-      <el-form-item label="商品类别" prop="category">
-        <el-select v-model="createForm.category" filterable clearable placeholder="请选择商品分类" v-if="!id">
-          <el-option v-for="(item,index) in categoryOption" :key="item._id" :label="item.secondCategoryName"
+      <el-form-item label="一级分类" prop="firstCategoryName">
+        <el-select v-model="createForm.firstCategoryName" filterable clearable placeholder="请选择商品分类" v-if="!id">
+          <el-option v-for="(item,index) in firstOption" :key="item._id" :label="item.firstCategoryName"
             :value="item._id">
           </el-option>
         </el-select>
-        <el-input v-else v-model="categoryname" :disabled="true"></el-input>
+        <el-input v-else v-model="firstCategoryName" :disabled="true"></el-input>
+      </el-form-item>
+      <el-form-item label="二级分类" prop="secondCategoryName">
+        <el-select v-model="createForm.secondCategoryName" filterable clearable placeholder="请选择商品分类" v-if="!id">
+          <el-option v-for="(item,index) in secondOption" :key="item._id" :label="item.secondCategoryName"
+            :value="item._id">
+          </el-option>
+        </el-select>
+        <el-input v-else v-model="secondCategoryName" :disabled="true"></el-input>
       </el-form-item>
       <el-form-item label="商品现价" prop="presentPrice">
         <el-input v-model="createForm.presentPrice" width="320" placeholder="请输入商品现价(例:￥72.70)">
@@ -73,17 +81,21 @@
       'https://muddyrain.oss-cn-beijing.aliyuncs.com/7.jpg',
       'https://muddyrain.oss-cn-beijing.aliyuncs.com/200622_2cb6jdfi3aj3b8gcedd978ie40ej3_3888x5832.jpg_468x468.jpg'
     ];
-    private categoryname: string = '';
+     private firstCategoryName: string = '';
+    private secondCategoryName: string = '';
     // 管理权限
     private purview: number = 1;
     private createForm: Object = {
-      goodsDetail: []
+      goodsDetail: [],
     }
-    categoryOption = [{
+    firstOption = [{
       _id: '1564860864351864',
       image: 'https://muddyrain.oss-cn-beijing.aliyuncs.com/4.png',
       firstCategoryName: '连衣裙',
-      secondCategoryName: '长款连衣裙'
+    }, ];
+    secondOption = [{
+      _id: '1564860864351864',
+      secondCategoryName: '吊带连衣裙',
     }, ];
     private dialogVisible: boolean = false;
     private dialogsrcList: string = '';
@@ -93,10 +105,15 @@
         message: '请输入商品名称',
         trigger: 'blur'
       }, ],
-      category: [{
+      firstCategoryName: [{
         required: true,
         message: '请选择商品分类',
-        trigger: 'change'
+        trigger: 'blur'
+      }, ],
+      secondCategoryName: [{
+        required: true,
+        message: '请选择商品分类',
+        trigger: 'blur'
       }, ],
       presentPrice: [{
         required: true,
@@ -132,11 +149,17 @@
       });
     }
     async changeCategory() {
-      const res = await this.$http.get('/girl/category');
-      this.categoryOption = res.data;
+      const first = await this.$http.get('/girl/first');
+      this.firstOption = first.data.data;
+      const second = await this.$http.get('/girl/second');
+      this.secondOption = second.data.data;
     }
     handleRemove(file: any, fileList: any) {
-      console.log(file, fileList);
+      let url: any = [];
+      for (const element of fileList) {
+        url.push(element.response[0].src);
+      }
+      (this.createForm as any).goodsDetail = url;
     }
     handlePictureCardPreview(file: any) {
       this.dialogVisible = true;
@@ -158,7 +181,8 @@
         (imgs as any).push(e[0]);
       });
       (this.srcList as any) = imgs;
-      this.categoryname = res.data.category.secondCategoryName;
+       this.firstCategoryName = res.data.firstCategoryName.firstCategoryName;
+      this.secondCategoryName = res.data.secondCategoryName.secondCategoryName;
     }
     async editForm(formName: any) {
       (this.$refs[formName] as Form).validate(async (valid) => {
@@ -179,13 +203,16 @@
       this.purview = (localStorage.getItem("purview") as any);
       if (this.purview == 0) {
         this.$message.info("您不是管理员请勿乱动")
-         this.$router.push('/clothing/girl');
+        this.$router.push('/clothing/girl');
         return
       }
-      this.changeCategory();
+      
       if (this.id) {
         this.findId();
       }
+    }
+    mounted(){
+      this.changeCategory();
     }
   };
 </script>
