@@ -128,6 +128,21 @@ export class GirlService {
       ).populate('firstCategoryName').populate('secondCategoryName');
     }
   }
+  async findGirlCategory(
+    {
+      count = null,
+      pagesize = null,
+      id
+    }) {
+    return await this.girl.find({ firstCategoryName: id }).limit(pagesize).skip(count).populate('firstCategoryName').populate('secondCategoryName');
+  }
+  async findGirlCategory2( {
+    count = null,
+    pagesize = null,
+    id
+  }) {
+    return await this.girl.find({ secondCategoryName: id }).limit(pagesize).skip(count).populate('firstCategoryName').populate('secondCategoryName');
+  }
   async findOne(id) {
     return await this.girl.findOne({ _id: id }).populate('firstCategoryName').populate('secondCategoryName');
   }

@@ -148,6 +148,22 @@ export class GirlController {
       }
     }
   }
+  @Get('findFirst')
+  async findGirlFirst(@Query() { id, count }) {
+    const res = await this.girlService.findGirlCategory({ count: (count - 1) * 6, pagesize: 6, id: id });
+    return {
+      data: res,
+      total: res.length
+    }
+  }
+  @Get('findSecond')
+  async findGirlSecond(@Query() { id, count }) {
+    const res = await this.girlService.findGirlCategory2({ count: (count - 1) * 6, pagesize: 6, id: id });
+    return {
+      data: res,
+      total: res.length
+    }
+  }
   @Get('/search')
   async findLike(@Query() { count, pagesize, keyword }) {
     let c = (count - 1) * pagesize
