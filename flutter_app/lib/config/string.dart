@@ -11,4 +11,14 @@ class KString {
   static const String noMoreText = "没有更多了";
   static const String toBottomText = "已经到底了";
   static const String noMoreData = "没有数据";
+  static const String detailsPageTitle = '商品详情';
+  static const String detailsPageExplain = '说明: > 急速送达 > 正品保证';
+  static const String allCheck = '全选';
+  static const String allPrice = '合计';
+  static const String allPriceAdv = '满66元免费配送，预购免费配送';
+  static const String orderTitle = '我的订单';
+  static const String toFu = '待付款';
+  static const String toFa = '待发货';
+  static const String toShou = '待收货';
+  static const String toPing = '待评价';
 }

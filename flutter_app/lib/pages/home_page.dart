@@ -7,9 +7,15 @@ import 'package:flutter_app/config/index.dart';
 import 'package:flutter_app/service/http_service.dart';
 import 'package:flutter_app/model/slide_model.dart';
 import 'package:flutter_app/model/girl_model.dart';
+import 'package:flutter_app/provide/category_provide.dart';
+import 'package:flutter_app/model/category_model.dart';
+import 'package:flutter_app/provide/current_index_provide.dart';
+import 'package:flutter_app/provide/category_provide.dart';
+import 'package:flutter_app/provide/category_goods_list_provide.dart';
+import 'package:flutter_app/model/goods_model.dart';
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:flutter_app/routes/application.dart';
 // 屏幕尺寸
 import 'package:flutter_screenutil/screenutil.dart';
 
@@ -37,10 +43,13 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
 
   //初始化分类模型
   NavigatorListModel navigatorList = NavigatorListModel([]);
+
   // 火爆专区模型
   GirlListModel hotsList = GirlListModel([]);
+
   // 火爆专区页面
   int hotsIndex = 1;
+
   // diff 只刷新有变化的数据
   GlobalKey<RefreshFooterState> _footkey = GlobalKey<RefreshFooterState>();
 
@@ -93,6 +102,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
       });
     });
   }
+
   //获取商品数据
   void getHots() async {
     //调用请求方法传入url及表单数据
@@ -106,6 +116,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
       });
     });
   }
+
   Widget build(BuildContext context) {
     if (slideList.data.length > 0) {
       return Scaffold(
@@ -183,13 +194,17 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
       ),
     ),
   );
+
 //
 //  // TODO  火爆专区子项
   Widget _wrapList() {
     if (this.hotsList.data.length != 0) {
       List<Widget> listWidget = this.hotsList.data.map((e) {
         return InkWell(
-          onTap: () {},
+          onTap: () {
+            Application.router.navigateTo(
+                context, "/details?id=${e.id}");
+          },
           child: Container(
             width: ScreenUtil().setWidth(360),
             color: Colors.white,
@@ -251,6 +266,7 @@ class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
       ),
     );
   }
+
   // 保持 数据
   @override
   // TODO: implement wantKeepAlive
@@ -288,6 +304,25 @@ class SwiperDiy extends StatelessWidget {
   }
 }
 
+// 跳转到分类页面
+void _goCategory(context, int index, String categoryId) async {
+  await requestUrl('girl/findFirst?id=${categoryId}&count=1').then((value) {
+    var data = json.decode(value.toString());
+    GoodsListModel goodList = GoodsListModel.fromJson(data);
+    Provide.value<CategoryGoodsListProvider>(context)
+        .getGoodsList(goodList.data);
+    Provide.value<CategoryProvide>(context)
+        .changeFirstCategory(categoryId, index);
+    Provide.value<CurrentIndexProvide>(context).changeIndex(1);
+  });
+  await requestData('first', id: null).then((value) {
+    var data = json.decode(value.toString());
+    CategoryModel category = CategoryModel.fromJson(data);
+    Provide.value<CategoryProvide>(context).getSecondCategory(
+        category.data[index].secondCategoryVO, categoryId);
+  });
+}
+
 // 分类图标展示
 class TopNavigator extends StatelessWidget {
   final List navigatorDataList;
@@ -298,6 +333,7 @@ class TopNavigator extends StatelessWidget {
     return InkWell(
       onTap: () {
         // 跳转到分类页面
+        _goCategory(context, index, item.id);
       },
       child: Column(
         children: <Widget>[
@@ -350,10 +386,10 @@ class RecommedUi extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: 10.0),
       child: Column(
-        children: <Widget>[
-          _titleWidget(),
-          _recommedList(context),
-        ],
+      children: <Widget>[
+      _titleWidget(),
+      _recommedList(context),
+      ],
       ),
     );
   }
@@ -398,7 +434,10 @@ class RecommedUi extends StatelessWidget {
 
   Widget _item(index, context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Application.router.navigateTo(
+            context, "/details?id=${recommedList[index].id}");
+      },
       child: Container(
         width: ScreenUtil().setWidth(300.0),
         padding: EdgeInsets.all(8.0),
